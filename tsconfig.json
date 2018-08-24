@@ -14,7 +14,9 @@
     "types": [
       "node",
       "mocha",
-      "chai"
+      "chai",
+      "webpack",
+      "webpack-env"
     ],
     "paths": {
       "@/*": [

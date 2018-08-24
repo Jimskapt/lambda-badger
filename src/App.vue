@@ -1,29 +1,63 @@
-<template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+<template lang="pug">
+v-app(dark)
+  v-navigation-drawer(persistent='', :mini-variant='miniVariant', :clipped='clipped', v-model='drawer', enable-resize-watcher='', fixed='', app='')
+    v-list
+      v-list-tile(value='true', v-for='(item, i) in items', :key='i')
+        v-list-tile-action
+          v-icon(v-html='item.icon')
+        v-list-tile-content
+          v-list-tile-title(v-text='item.title')
+  v-toolbar(app='', :clipped-left='clipped')
+    v-toolbar-side-icon(@click.stop='drawer = !drawer')
+    v-btn(icon='', @click.stop='miniVariant = !miniVariant')
+      v-icon(v-html="miniVariant ? 'chevron_right' : 'chevron_left'")
+    v-btn(icon='', @click.stop='clipped = !clipped')
+      v-icon web
+    v-btn(icon='', @click.stop='fixed = !fixed')
+      v-icon remove
+    v-toolbar-title(v-text='title')
+    v-spacer
+    v-btn(icon='', @click.stop='rightDrawer = !rightDrawer')
+      v-icon menu
+  v-content
+    v-container
+      p(style="text-align:center;")
+        router-link(to='/') Home
+        span &nbsp;|&nbsp;
+        router-link(to='/about') About
+    router-view
+  v-navigation-drawer(temporary='', :right='right', v-model='rightDrawer', fixed='', app='')
+    v-list
+      v-list-tile(@click='right = !right')
+        v-list-tile-action
+          v-icon compare_arrows
+        v-list-tile-title Switch drawer (click me)
+  v-footer(:fixed='fixed', app='')
+    span Catullus-Proteus project, 2018
 </template>
 
-<style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-</style>
+<script>
+import HelloWorld from './components/HelloWorld';
+
+export default {
+  name: 'App',
+  components: {
+    HelloWorld,
+  },
+  data() {
+    return {
+      clipped: false,
+      drawer: false,
+      fixed: false,
+      items: [{
+        icon: 'bubble_chart',
+        title: 'Inspire',
+      }],
+      miniVariant: false,
+      right: true,
+      rightDrawer: false,
+      title: 'Vuetify.js',
+    };
+  },
+};
+</script>
