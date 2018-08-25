@@ -1,9 +1,29 @@
 {
-  "message": "hello i18n !!",
+  "local_description": "English (United States of America)",
+  "US_locale_description": "English (United States of America)",
   "$vuetify": {
     "dataIterator": {
-      "rowsPerPageText": "Items per page:",
-      "pageText": "{0}-{1} of {2}"
-    }
-  }
+      "rowsPerPageText": "Items per page :",
+      "rowsPerPageAll": "All",
+      "pageText": "{0}-{1} of {2}",
+      "noResultsText": "No matching records found",
+      "nextPage": "Next page",
+      "prevPage": "Previous page"
+    },
+    "dataTable": {
+      "rowsPerPageText": "Rows per page :"
+    },
+    "noDataText": "No data available"
+  },
+  "message": "hello i18n !!",
+  "Locale": "Locale",
+  "Settings": "Settings",
+  "Use dark colors ?": "Use dark colors ?",
+  "Export your data": "Export your data",
+  "Import your data": "Import your data",
+  "Save": "Save",
+  "Load": "Load",
+  "Debug : refresh page": "Debug : refresh page",
+  "Abort": "Abort",
+  "OK": "OK"
 }

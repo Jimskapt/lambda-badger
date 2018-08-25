@@ -1,5 +1,5 @@
 <template lang="pug">
-v-app(dark)
+v-app(:dark="darkMode")
   v-navigation-drawer(persistent='', :mini-variant='miniVariant', :clipped='clipped', v-model='drawer', enable-resize-watcher='', fixed='', app='')
     v-list
       v-list-tile(value='true', v-for='(item, i) in items', :key='i')
@@ -25,6 +25,8 @@ v-app(dark)
         router-link(to='/') Home
         span &nbsp;|&nbsp;
         router-link(to='/about') About
+        span &nbsp;|&nbsp;
+        router-link(to='/settings') {{ $t('Settings') }}
     router-view
   v-navigation-drawer(temporary='', :right='right', v-model='rightDrawer', fixed='', app='')
     v-list
@@ -38,26 +40,23 @@ v-app(dark)
 
 <script>
 import HelloWorld from './components/HelloWorld';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 
-export default {
-  name: 'App',
+@Component({
   components: {
     HelloWorld,
   },
-  data() {
-    return {
-      clipped: false,
-      drawer: false,
-      fixed: false,
-      items: [{
-        icon: 'bubble_chart',
-        title: 'Inspire',
-      }],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js',
-    };
-  },
+})
+export default class SettingsPage extends Vue {
+  darkMode = false
+
+  @Watch('$store.state.settings.darkMode')
+  darkMode_change(value) {
+    this.darkMode = value;
+  }
+
+  created() {
+    this.dark = this.$store.state.settings.darkMode;
+  }
 };
 </script>
