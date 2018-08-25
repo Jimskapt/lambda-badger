@@ -3,11 +3,12 @@ import './registerServiceWorker';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 
 import Vue from 'vue';
+
+import './plugins/vuetify.ts';
+
 import App from './App.vue';
 
-import './plugins/vuetify';
-
-import i18n from './i18n';
+import i18n from '@/i18n';
 import router from './router';
 import store from './store';
 
