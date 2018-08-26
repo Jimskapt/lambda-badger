@@ -1,8 +1,11 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import PouchDB from 'pouchdb-browser';
+import cloneDeep from 'lodash.clonedeep';
 
 import i18n from '@/i18n';
+
+import { NoteDoc } from '@/custom-types.d.ts';
 
 Vue.use(Vuex);
 
@@ -17,8 +20,21 @@ const store = new Vuex.Store({
   strict: true,
   state: {
     settings: DEFAULT_SETTINGS,
+    notes: {} as {[key: string]: object},
   },
   mutations: {
+    setNote(state, payload) {
+      if (typeof(payload.data) === 'undefined') {
+        console.error('$store.mutations.setNote : missing "data" object on payload');
+        return;
+      }
+      if (typeof(payload.data._id) === 'undefined') {
+        console.error('$store.mutations.setNote : missing "_id" value on payload.data');
+        return;
+      }
+
+      Vue.set(state.notes, payload.data._id, payload.data);
+    },
     setLocale(state, payload: any) {
       if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
         // TODO check if the key is in available locales
@@ -78,9 +94,103 @@ const store = new Vuex.Store({
     },
   },
   actions: {
+    fetchAllNotes(context) {
+      return new Promise((resolve, reject) => {
+        db.query('all_notes/all_notes', {include_docs: true})
+          .then((res) => {
+            res.rows.forEach((row) => {
+              context.commit('setNote', {data: row.doc});
+            });
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+    getNote(context, payload: {id: string}) {
+      return new Promise((resolve, reject) => {
+        const found = context.state.notes[payload.id];
+        if (typeof(found) !== 'undefined') {
+          resolve({find: true, doc: cloneDeep(found)});
+        } else {
+          db.get(payload.id)
+            .then((doc) => {
+              resolve({find: true, doc});
+            })
+            .catch((err) => {
+              reject({find: false, err});
+            });
+        }
+      });
+    },
+    setNote(context, payload: {data: NoteDoc}) {
+      return new Promise((resolve, reject) => {
+        if (typeof(payload.data) === 'undefined') {
+          reject('$store.actions.setNote : missing "data" object in payload');
+          return;
+        }
 
+        const okDB = (res: PouchDB.Core.Response) => {
+          if (res.ok) {
+            db.get(res.id)
+              .then((doc) => {
+                Vue.set(res, 'doc', doc);
+                resolve(res);
+              })
+              .catch((err) => {
+                reject(err);
+              });
+          } else {
+            reject({message: 'not ok'});
+          }
+        };
+
+        if (typeof(payload.data._id) === 'undefined') {
+          db.post(payload.data)
+            .then((res) => {
+              okDB(res);
+            })
+            .catch((err) => { reject(err); });
+        } else {
+          db.put(payload.data)
+            .then((res) => {
+              okDB(res);
+            })
+            .catch((err) => { reject(err); });
+        }
+      });
+    },
   },
 });
+
+const allNotes = {
+  _id: '_design/all_notes',
+  views: {
+    all_notes: {
+      map: 'function(doc) { if (doc.data_type == "note") { emit(doc._id, true); } }',
+    },
+  },
+};
+
+db.get('_design/all_notes')
+  .then((doc) => {
+    Vue.set(allNotes, '_rev', doc._rev);
+  })
+  .catch((err) => { }) // no problem
+  .finally(() => {
+    db.put(allNotes as object)
+      .then((res) => {
+        store.dispatch('fetchAllNotes');
+      })
+      .catch((err) => {
+        console.error('CPE0004: ', err);
+      });
+
+    store.dispatch('fetchAllNotes')
+      .catch((err) => {
+        console.error('CPE0005: ', err);
+      });
+  });
 
 db.get('locale')
 .then((doc: any) => {
@@ -93,5 +203,14 @@ db.get('dark_mode')
   store.commit('setDarkMode', {value: doc.value});
 })
 .catch((err) => {}); // error are not important
+
+db.changes({
+  include_docs: true,
+})
+  .on('change', (change: any) => {
+    if (change.doc.data_type === 'note') {
+      store.commit('setNote', { data: change.doc });
+    }
+  });
 
 export default store;

@@ -25,5 +25,7 @@
   "Load": "Charger",
   "Debug : refresh page": "Deboguage : rafraîchir la page",
   "Abort": "Annuler",
-  "OK": "OK"
+  "OK": "OK",
+  "Content": "Contenu",
+  "Create": "Create"
 }

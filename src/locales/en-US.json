@@ -25,5 +25,7 @@
   "Load": "Load",
   "Debug : refresh page": "Debug : refresh page",
   "Abort": "Abort",
-  "OK": "OK"
+  "OK": "OK",
+  "Content": "Content",
+  "Create": "Create"
 }

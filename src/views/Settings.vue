@@ -17,15 +17,6 @@ div
                         autocomplete,
                         return-object)
         v-switch(:label="$t('Use dark colors ?')", v-model="dark")
-        v-layout
-          v-flex(xs6, mr-1)
-            v-btn(block, @click="$router.push({name:'Save'})")
-              v-icon save
-              span {{ $t('Export your data') }}
-          v-flex(xs6, ml-1)
-            v-btn(block, @click="$router.push({name:'Load'})")
-              v-icon unarchive
-              span {{ $t('Import your data') }}
         v-btn(dark, block, color='warning', @click='forceRefresh')
           v-icon refresh
           span {{ $t('Debug : refresh page') }}
