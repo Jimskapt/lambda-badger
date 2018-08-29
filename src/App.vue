@@ -16,7 +16,7 @@ v-app(:dark="darkMode")
 </template>
 
 <script>
-import pkgInfo from '../package.json'
+import pkgInfo from '../package.json';
 import HelloWorld from './components/HelloWorld';
 import { Vue, Component, Watch } from 'vue-property-decorator';
 
@@ -26,9 +26,9 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
   },
 })
 export default class SettingsPage extends Vue {
-  drawer = false
-  darkMode = false
-  appTitle = pkgInfo.displayName + ' ' + pkgInfo.version
+  drawer = false;
+  darkMode = false;
+  appTitle = pkgInfo.displayName + ' ' + pkgInfo.version;
 
   @Watch('$store.state.settings.darkMode')
   darkMode_change(value) {
@@ -38,5 +38,5 @@ export default class SettingsPage extends Vue {
   created() {
     this.dark = this.$store.state.settings.darkMode;
   }
-};
+}
 </script>

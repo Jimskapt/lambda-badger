@@ -1,6 +1,6 @@
 {
-  "local_description": "Français (France)",
-  "US_locale_description": "French (France)",
+  "english_locale_description": "French (France)",
+  "translated_description": "Français (France)",
   "$vuetify": {
     "dataIterator": {
       "rowsPerPageText": "Élements par page :",

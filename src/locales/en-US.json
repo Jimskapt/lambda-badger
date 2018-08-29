@@ -1,6 +1,6 @@
 {
-  "local_description": "English (United States of America)",
-  "US_locale_description": "English (United States of America)",
+  "english_locale_description": "English (United States of America)",
+  "translated_description": "English (United States of America)",
   "$vuetify": {
     "dataIterator": {
       "rowsPerPageText": "Items per page :",

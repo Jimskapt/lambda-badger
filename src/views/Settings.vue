@@ -8,9 +8,9 @@ div
         v-toolbar-title {{ $t("Settings") }}
       v-container
         v-autocomplete( :items='available_locales_array',
-                        item-text='us',
+                        item-text='english',
                         item-value='value',
-                        :hint='`${locale.local}`',
+                        :hint='`${locale.translated}`',
                         v-model='locale',
                         :label="$t('Locale') + ' (locale)'",
                         prepend-icon='language',
@@ -32,13 +32,18 @@ div
 <script type="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
 
+const TRANSLATED_DESCRIPTION = 'translated_description';
+const ENGLISH_LOCALE_DESCRIPTION = 'english_locale_description';
+
+const fallbackLocale = {
+  value: 'en-US',
+  translated: 'English (US)',
+  english: 'English (US)',
+};
+
 @Component
 export default class SettingsPage extends Vue {
-  locale = {
-    value: 'en-US',
-    local: 'English (US)',
-    us: 'English (US)',
-  };
+  locale = fallbackLocale;
 
   dark = false;
   @Watch('$store.state.settings.darkMode')
@@ -49,19 +54,11 @@ export default class SettingsPage extends Vue {
   @Watch('available_locales')
   available_locales_change(value) {
     if (typeof(value) === 'undefined') {
-      this.locale = {
-        value: 'en-US',
-        local: 'English (US)',
-        us: 'English (US)',
-      };
+      this.locale = fallbackLocale;
     } else {
       const target = value[this.$store.state.settings.locale];
       if (typeof(target) === 'undefined') {
-        this.locale = {
-          value: 'en-US',
-          local: 'English (US)',
-          us: 'English (US)',
-        };
+        this.locale = fallbackLocale;
       } else {
         this.locale = target;
       }
@@ -71,19 +68,11 @@ export default class SettingsPage extends Vue {
   @Watch('$store.state.settings.locale')
   store_locale_change(value) {
     if (typeof(value) === 'undefined') {
-      this.locale = {
-        value: 'en-US',
-        local: 'English (US)',
-        us: 'English (US)',
-      };
+      this.locale = fallbackLocale;
     } else {
       const target = this.available_locales[value];
       if (typeof(target) === 'undefined') {
-        this.locale = {
-          value: 'en-US',
-          local: 'English (US)',
-          us: 'English (US)',
-        };
+        this.locale = fallbackLocale;
       } else {
         this.locale = target;
       }
@@ -98,8 +87,8 @@ export default class SettingsPage extends Vue {
         const item = {
             value: m,
         };
-        item.local = this.$i18n.messages[m]['local_description'];
-        item.us = this.$i18n.messages[m]['US_locale_description'];
+        item.translated = this.$i18n.messages[m][TRANSLATED_DESCRIPTION];
+        item.english = this.$i18n.messages[m][ENGLISH_LOCALE_DESCRIPTION];
         Vue.set(result, m, item);
       });
     }
