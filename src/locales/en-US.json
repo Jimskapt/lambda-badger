@@ -27,5 +27,8 @@
   "Abort": "Abort",
   "OK": "OK",
   "Content": "Content",
-  "Create": "Create"
+  "Create": "Create",
+  "Go back": "Go back",
+  "a note": "a note",
+  "There is no notes": "There is no notes"
 }

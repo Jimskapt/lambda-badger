@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Settings from './views/Settings.vue';
 import EditNote from './views/EditNote.vue';
+import Notes from './views/Notes.vue';
 
 Vue.use(Router);
 
@@ -33,6 +34,11 @@ export default new Router({
       name: 'edit-note',
       component: EditNote,
       props: true,
+    },
+    {
+      path: '/notes',
+      name: 'notes',
+      component: Notes,
     },
   ],
 });

@@ -1,11 +1,14 @@
 <template lang="pug">
     v-container
+        v-container
+            v-btn(color="secondary", @click="$router.back()")
+                v-icon chevron_left
+                span {{ $t('Go back') }}
         h2
             span(v-if="exists") Edit 
             span(v-else) Create 
             | note 
             span(v-if="exists") \#{{ dbDoc._id }}
-        pre {{dbDoc}}
         v-textarea(:label="$t('Content')", v-model="dbDoc.content")
         v-btn(block, color="primary", @click="save", v-if="exists")
             v-icon save
