@@ -30,5 +30,9 @@
   "Create": "Create",
   "Go back": "Retour",
   "a note": "une note",
-  "There is no notes": "Il n'y a pas de notes."
+  "There is no notes": "Il n'y a pas de notes.",
+  "The url of your CouchDB-like database": "L'adresse de votre base de donnée compatible CouchDB",
+  "optional": "faculatif",
+  "Do a manual update": "Lancer une mise à jour manuelle",
+  "Update automatically": "Mettre à jour automatiquement"
 }

@@ -10,10 +10,13 @@ import { NoteDoc } from '@/custom-types.d.ts';
 Vue.use(Vuex);
 
 const db = new PouchDB('cpdb');
+const dbSettings = new PouchDB('cpdb-settings');
 
 const DEFAULT_SETTINGS = {
   locale: 'en-US',
+  couchUrl: '',
   darkMode: false,
+  allowAutomaticUpdate: false,
 };
 
 const store = new Vuex.Store({
@@ -45,21 +48,21 @@ const store = new Vuex.Store({
         state.settings.locale = payload.value;
         i18n.locale = payload.value;
 
-        db.get('locale')
-        .then((doc: any) => {
-          doc.value = payload.value;
-          db.put(doc);
-        })
-        .catch((err) => {
-          if (err.name === 'not_found') {
-            db.post({
-              _id: 'locale',
-              value: payload.value,
-            });
-          } else {
-            // TODO
-          }
-        });
+        dbSettings.get('locale')
+          .then((doc: any) => {
+            doc.value = payload.value;
+            dbSettings.put(doc);
+          })
+          .catch((err) => {
+            if (err.name === 'not_found') {
+              dbSettings.post({
+                _id: 'locale',
+                value: payload.value,
+              });
+            } else {
+              // TODO
+            }
+          });
 
       } else {
         console.error('$store.mutations.setLocale : payload or payload.value is undefined');
@@ -72,24 +75,78 @@ const store = new Vuex.Store({
         }
         state.settings.darkMode = payload.value;
 
-        db.get('dark_mode')
-        .then((doc: any) => {
-          doc.value = payload.value;
-          db.put(doc);
-        })
-        .catch((err) => {
-          if (err.name === 'not_found') {
-            db.post({
-              _id: 'dark_mode',
-              value: payload.value,
-            });
-          } else {
-            // TODO
-          }
-        });
+        dbSettings.get('dark_mode')
+          .then((doc: any) => {
+            doc.value = payload.value;
+            dbSettings.put(doc);
+          })
+          .catch((err) => {
+            if (err.name === 'not_found') {
+              dbSettings.post({
+                _id: 'dark_mode',
+                value: payload.value,
+              });
+            } else {
+              // TODO
+            }
+          });
 
       } else {
         console.error('$store.mutations.setDarkMode : payload or payload.value is undefined');
+      }
+    },
+    setCouchURL(state, payload: any) {
+      if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
+        if (typeof(state.settings) === 'undefined') {
+          state.settings = DEFAULT_SETTINGS;
+        }
+        state.settings.couchUrl = payload.value;
+
+        dbSettings.get('couch_url')
+          .then((doc: any) => {
+            doc.value = payload.value;
+            dbSettings.put(doc);
+          })
+          .catch((err) => {
+            if (err.name === 'not_found') {
+              dbSettings.post({
+                _id: 'couch_url',
+                value: payload.value,
+              });
+            } else {
+              // TODO
+            }
+          });
+
+      } else {
+        console.error('$store.mutations.setCouchURL : payload or payload.value is undefined');
+      }
+    },
+    setAllowAutomaticUpdate(state, payload: any) {
+      if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
+        if (typeof(state.settings) === 'undefined') {
+          state.settings = DEFAULT_SETTINGS;
+        }
+        state.settings.allowAutomaticUpdate = payload.value;
+
+        dbSettings.get('allow_automatic_update')
+          .then((doc: any) => {
+            doc.value = payload.value;
+            dbSettings.put(doc);
+          })
+          .catch((err) => {
+            if (err.name === 'not_found') {
+              dbSettings.post({
+                _id: 'allow_automatic_update',
+                value: payload.value,
+              });
+            } else {
+              // TODO
+            }
+          });
+
+      } else {
+        console.error('$store.mutations.setAllowAutomaticUpdate : payload or payload.value is undefined');
       }
     },
   },
@@ -192,15 +249,27 @@ db.get('_design/all_notes')
       });
   });
 
-db.get('locale')
+dbSettings.get('locale')
 .then((doc: any) => {
   store.commit('setLocale', {value: doc.value});
 })
 .catch((err) => {}); // error are not important
 
-db.get('dark_mode')
+dbSettings.get('dark_mode')
 .then((doc: any) => {
   store.commit('setDarkMode', {value: doc.value});
+})
+.catch((err) => {}); // error are not important
+
+dbSettings.get('couch_url')
+.then((doc: any) => {
+  store.commit('setCouchURL', {value: doc.value});
+})
+.catch((err) => {}); // error are not important
+
+dbSettings.get('allow_automatic_update')
+.then((doc: any) => {
+  store.commit('setAllowAutomaticUpdate', {value: doc.value});
 })
 .catch((err) => {}); // error are not important
 

@@ -6,27 +6,43 @@ div
         v-btn(icon)
           v-icon settings
         v-toolbar-title {{ $t("Settings") }}
-      v-container
-        v-autocomplete( :items='available_locales_array',
-                        item-text='english',
-                        item-value='value',
-                        :hint='`${locale.translated}`',
-                        v-model='locale',
-                        :label="$t('Locale') + ' (locale)'",
-                        prepend-icon='language',
-                        autocomplete,
-                        return-object)
-        v-switch(:label="$t('Use dark colors ?')", v-model="dark")
-        v-btn(dark, block, color='warning', @click='forceRefresh')
-          v-icon refresh
-          span {{ $t('Debug : refresh page') }}
-      v-card-actions
-        v-btn(block, color='error', @click='$router.go(-1)')
-          v-icon clear
-          span {{ $t("Abort") }}
-        v-btn(block, color='success', @click='save')
-          v-icon done
-          span {{ $t("OK") }}
+      v-card-text
+        v-container
+          v-autocomplete(
+            :items='available_locales_array',
+            item-text='english',
+            item-value='value',
+            :hint='`${locale.translated}`',
+            v-model='locale',
+            :label="$t('Locale') + ' (locale)'",
+            prepend-icon='language',
+            autocomplete,
+            return-object
+          )
+          v-switch(:label="$t('Use dark colors ?')", v-model="dark")
+          v-text-field(
+            v-model="couchUrl",
+            :label="$t('The url of your CouchDB-like database') + ' (' + $t('optional') + ')'",
+            prepend-icon='database'
+            clearable
+          )
+          v-layout
+            v-flex(shrink, pr-2)
+              v-checkbox(v-model="allowAutomaticUpdate", :label="$t('Update automatically')", v-if="couchUrl.trim() !== ''")
+            v-flex(pl-2)
+              v-btn(block, v-if="couchUrl.trim() !== '' && !allowAutomaticUpdate")
+                v-icon sync
+                span {{ $t('Do a manual update') }}
+          v-btn(block, color='warning', @click='forceRefresh')
+            v-icon refresh
+            span {{ $t('Debug : refresh page') }}
+        v-card-actions
+          v-btn(block, color='error', @click='$router.go(-1)')
+            v-icon clear
+            span {{ $t("Abort") }}
+          v-btn(block, color='success', @click='save')
+            v-icon done
+            span {{ $t("OK") }}
 </template>
 
 <script type="ts">
@@ -44,11 +60,23 @@ const fallbackLocale = {
 @Component
 export default class SettingsPage extends Vue {
   locale = fallbackLocale;
-
   dark = false;
+  couchUrl = '';
+  allowAutomaticUpdate = false;
+
   @Watch('$store.state.settings.darkMode')
-  darkMode_change(value) {
+  store_darkMode_change(value) {
     this.dark = value;
+  }
+
+  @Watch('$store.state.settings.couchUrl')
+  store_couchUrl_change(value) {
+    this.couchUrl = value;
+  }
+
+  @Watch('$store.state.settings.allowAutomaticUpdate')
+  store_allowAutomaticUpdate_change(value) {
+    this.allowAutomaticUpdate = value;
   }
 
   @Watch('available_locales')
@@ -110,11 +138,15 @@ export default class SettingsPage extends Vue {
     }
 
     this.$store.commit('setDarkMode', {value: this.dark});
+    this.$store.commit('setCouchURL', {value: this.couchUrl});
+    this.$store.commit('setAllowAutomaticUpdate', {value: this.allowAutomaticUpdate});
   }
 
   created() {
     this.locale = this.$store.state.settings.locale;
     this.dark = this.$store.state.settings.darkMode;
+    this.couchUrl = this.$store.state.settings.couchUrl;
+    this.allowAutomaticUpdate = this.$store.state.settings.allowAutomaticUpdate;
   }
 }
 </script>

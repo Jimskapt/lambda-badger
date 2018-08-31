@@ -7,9 +7,10 @@
                 br
                 router-link(:to="{name: 'edit-note', params: {id: 1}}") {{ $t('Create') + ' ' + $t('a note') }}
             v-layout(wrap)
-                v-flex(v-for="note in notes", :key="note._id", pa-1, xs12, sm6, md4, lg3, xl2)
-                    v-card(hover, height="100%", :to="{name: 'edit-note', params: {id: note._id}}")
-                        v-card-text {{ note.content }}
+                v-flex(v-for="note in notes", :key="note._id", pa-1, d-flex)
+                    v-card(hover, :to="{name: 'edit-note', params: {id: note._id}}")
+                        v-card-text
+                            pre {{ note.content }}
             v-btn(large, fab, fixed, bottom, right, color="primary", :to="{name: 'edit-note', params: {id: 1}}")
                 v-icon add
 </template>
