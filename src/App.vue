@@ -12,31 +12,30 @@ v-app(:dark="darkMode")
     v-toolbar-side-icon(@click.stop='drawer = !drawer')
     v-toolbar-title(v-text='appTitle')
   v-content
-    router-view
+    v-container
+      router-view
 </template>
 
 <script>
 import pkgInfo from '../package.json';
-import HelloWorld from './components/HelloWorld';
-import { Vue, Component, Watch } from 'vue-property-decorator';
 
-@Component({
-  components: {
-    HelloWorld,
+export default {
+  name: 'app',
+  data() {
+    return {
+      drawer: false,
+      darkMode: false,
+      appTitle: pkgInfo.displayName + ' ' + pkgInfo.version
+    }
   },
-})
-export default class SettingsPage extends Vue {
-  drawer = false;
-  darkMode = false;
-  appTitle = pkgInfo.displayName + ' ' + pkgInfo.version;
-
-  @Watch('$store.state.settings.darkMode')
-  darkMode_change(value) {
-    this.darkMode = value;
-  }
-
   created() {
-    this.dark = this.$store.state.settings.darkMode;
+    // this.darkMode = this.$store.state.settings.darkMode;
+
+    const that = this;
+    this.$store.watch(
+      function() { return that.$store.state.settings.darkMode; },
+      function(value) { that.darkMode = value; }
+    );
   }
 }
 </script>

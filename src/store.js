@@ -3,9 +3,7 @@ import Vuex from 'vuex';
 import PouchDB from 'pouchdb-browser';
 import cloneDeep from 'lodash.clonedeep';
 
-import i18n from '@/i18n';
-
-import { NoteDoc } from '@/custom-types.d.ts';
+import i18n from '@/i18n.js';
 
 Vue.use(Vuex);
 
@@ -16,14 +14,14 @@ const DEFAULT_SETTINGS = {
   locale: 'en-US',
   couchUrl: '',
   darkMode: false,
-  allowAutomaticUpdate: false,
+  allowAutomaticUpdate: false
 };
 
 const store = new Vuex.Store({
   strict: true,
   state: {
     settings: DEFAULT_SETTINGS,
-    notes: {} as {[key: string]: object},
+    notes: {}
   },
   mutations: {
     setNote(state, payload) {
@@ -38,7 +36,7 @@ const store = new Vuex.Store({
 
       Vue.set(state.notes, payload.data._id, payload.data);
     },
-    setLocale(state, payload: any) {
+    setLocale(state, payload) {
       if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
         // TODO check if the key is in available locales
 
@@ -49,7 +47,7 @@ const store = new Vuex.Store({
         i18n.locale = payload.value;
 
         dbSettings.get('locale')
-          .then((doc: any) => {
+          .then((doc) => {
             doc.value = payload.value;
             dbSettings.put(doc);
           })
@@ -68,7 +66,7 @@ const store = new Vuex.Store({
         console.error('$store.mutations.setLocale : payload or payload.value is undefined');
       }
     },
-    setDarkMode(state, payload: any) {
+    setDarkMode(state, payload) {
       if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
         if (typeof(state.settings) === 'undefined') {
           state.settings = DEFAULT_SETTINGS;
@@ -76,7 +74,7 @@ const store = new Vuex.Store({
         state.settings.darkMode = payload.value;
 
         dbSettings.get('dark_mode')
-          .then((doc: any) => {
+          .then((doc) => {
             doc.value = payload.value;
             dbSettings.put(doc);
           })
@@ -95,7 +93,7 @@ const store = new Vuex.Store({
         console.error('$store.mutations.setDarkMode : payload or payload.value is undefined');
       }
     },
-    setCouchURL(state, payload: any) {
+    setCouchURL(state, payload) {
       if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
         if (typeof(state.settings) === 'undefined') {
           state.settings = DEFAULT_SETTINGS;
@@ -103,7 +101,7 @@ const store = new Vuex.Store({
         state.settings.couchUrl = payload.value;
 
         dbSettings.get('couch_url')
-          .then((doc: any) => {
+          .then((doc) => {
             doc.value = payload.value;
             dbSettings.put(doc);
           })
@@ -122,7 +120,7 @@ const store = new Vuex.Store({
         console.error('$store.mutations.setCouchURL : payload or payload.value is undefined');
       }
     },
-    setAllowAutomaticUpdate(state, payload: any) {
+    setAllowAutomaticUpdate(state, payload) {
       if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
         if (typeof(state.settings) === 'undefined') {
           state.settings = DEFAULT_SETTINGS;
@@ -130,7 +128,7 @@ const store = new Vuex.Store({
         state.settings.allowAutomaticUpdate = payload.value;
 
         dbSettings.get('allow_automatic_update')
-          .then((doc: any) => {
+          .then((doc) => {
             doc.value = payload.value;
             dbSettings.put(doc);
           })
@@ -148,7 +146,7 @@ const store = new Vuex.Store({
       } else {
         console.error('$store.mutations.setAllowAutomaticUpdate : payload or payload.value is undefined');
       }
-    },
+    }
   },
   actions: {
     fetchAllNotes(context) {
@@ -164,7 +162,7 @@ const store = new Vuex.Store({
           });
       });
     },
-    getNote(context, payload: {id: string}) {
+    getNote(context, payload) {
       return new Promise((resolve, reject) => {
         const found = context.state.notes[payload.id];
         if (typeof(found) !== 'undefined') {
@@ -180,14 +178,14 @@ const store = new Vuex.Store({
         }
       });
     },
-    setNote(context, payload: {data: NoteDoc}) {
+    setNote(context, payload) {
       return new Promise((resolve, reject) => {
         if (typeof(payload.data) === 'undefined') {
           reject('$store.actions.setNote : missing "data" object in payload');
           return;
         }
 
-        const okDB = (res: PouchDB.Core.Response) => {
+        const okDB = (res) => {
           if (res.ok) {
             db.get(res.id)
               .then((doc) => {
@@ -216,27 +214,27 @@ const store = new Vuex.Store({
             .catch((err) => { reject(err); });
         }
       });
-    },
-  },
-});
+    }
+  }
+})
 
 const allNotes = {
   _id: '_design/all_notes',
   views: {
     all_notes: {
-      map: 'function(doc) { if (doc.data_type == "note") { emit(doc._id, true); } }',
-    },
-  },
-};
+      map: 'function(doc) { if (doc.data_type == "note") { emit(doc._id, true); } }'
+    }
+  }
+}
 
 db.get('_design/all_notes')
   .then((doc) => {
-    Vue.set(allNotes, '_rev', doc._rev);
+    Vue.set(allNotes, '_rev', doc._rev)
   })
-  .catch((err) => { }) // no problem
+  .catch(() => { }) // no problem
   .finally(() => {
-    db.put(allNotes as object)
-      .then((res) => {
+    db.put(allNotes)
+      .then(() => {
         store.dispatch('fetchAllNotes');
       })
       .catch((err) => {
@@ -250,33 +248,33 @@ db.get('_design/all_notes')
   });
 
 dbSettings.get('locale')
-.then((doc: any) => {
+.then((doc) => {
   store.commit('setLocale', {value: doc.value});
 })
-.catch((err) => {}); // error are not important
+.catch(() => {}); // error are not important
 
 dbSettings.get('dark_mode')
-.then((doc: any) => {
+.then((doc) => {
   store.commit('setDarkMode', {value: doc.value});
 })
-.catch((err) => {}); // error are not important
+.catch(() => {}); // error are not important
 
 dbSettings.get('couch_url')
-.then((doc: any) => {
+.then((doc) => {
   store.commit('setCouchURL', {value: doc.value});
 })
-.catch((err) => {}); // error are not important
+.catch(() => {}); // error are not important
 
 dbSettings.get('allow_automatic_update')
-.then((doc: any) => {
+.then((doc) => {
   store.commit('setAllowAutomaticUpdate', {value: doc.value});
 })
-.catch((err) => {}); // error are not important
+.catch(() => {}); // error are not important
 
 db.changes({
   include_docs: true,
 })
-  .on('change', (change: any) => {
+  .on('change', (change) => {
     if (change.doc.data_type === 'note') {
       store.commit('setNote', { data: change.doc });
     }

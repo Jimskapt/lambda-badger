@@ -10,18 +10,14 @@ v-container(fluid='')
             em —John Johnson
       blockquote
         | “{{ $t('hello') }}”
-        br
-        | “{{ $t('message') }}”
         footer
           small
             em —Vue-i18n
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-
-@Component
-export default class HelloWorld extends Vue {
+<script>
+export default {
+  name: 'HelloWorld'
 }
 </script>
 
