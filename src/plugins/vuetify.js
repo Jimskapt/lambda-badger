@@ -1,9 +1,10 @@
-import 'vuetify/dist/vuetify.min.css'
+import 'vuetify/dist/vuetify.min.css';
+import 'material-design-icons-iconfont/dist/material-design-icons.css';
 
-import Vue from 'vue'
-import Vuetify from 'vuetify'
+import Vue from 'vue';
+import Vuetify from 'vuetify';
 
-import i18n from '@/i18n.js'
+import i18n from '@/i18n.js';
 
 Vue.use(Vuetify, {
   theme: {
@@ -13,9 +14,9 @@ Vue.use(Vuetify, {
     error: '#FF5252',
     info: '#2196F3',
     success: '#4CAF50',
-    warning: '#FFC107'
+    warning: '#FFC107',
   },
   lang: {
     t: (key, ...params) => i18n.t(key, params),
-  }
+  },
 });

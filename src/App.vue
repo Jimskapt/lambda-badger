@@ -25,16 +25,16 @@ export default {
     return {
       drawer: false,
       darkMode: false,
-      appTitle: pkgInfo.displayName + ' ' + pkgInfo.version
-    }
+      appTitle: pkgInfo.displayName + ' ' + pkgInfo.version,
+    };
   },
   created() {
-    // this.darkMode = this.$store.state.settings.darkMode;
+    this.darkMode = this.$store.state.settings.darkMode;
 
     const that = this;
     this.$store.watch(
       function() { return that.$store.state.settings.darkMode; },
-      function(value) { that.darkMode = value; }
+      function(value) { that.darkMode = value; },
     );
   }
 }

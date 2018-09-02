@@ -1,4 +1,4 @@
-# catullus-proteus-js2
+# Catullus Proteus
 
 ## Project setup
 ```

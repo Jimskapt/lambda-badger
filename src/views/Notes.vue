@@ -22,7 +22,7 @@ export default {
 			return Object.keys(this.$store.state.notes).map((key) => {
 				return this.$store.state.notes[key];
 			});
-		}
-	}
-}
+		},
+	},
+};
 </script>

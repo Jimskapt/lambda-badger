@@ -21,7 +21,7 @@ const store = new Vuex.Store({
   strict: true,
   state: {
     settings: DEFAULT_SETTINGS,
-    notes: {}
+    notes: {},
   },
   mutations: {
     setNote(state, payload) {
@@ -146,7 +146,7 @@ const store = new Vuex.Store({
       } else {
         console.error('$store.mutations.setAllowAutomaticUpdate : payload or payload.value is undefined');
       }
-    }
+    },
   },
   actions: {
     fetchAllNotes(context) {
@@ -214,22 +214,22 @@ const store = new Vuex.Store({
             .catch((err) => { reject(err); });
         }
       });
-    }
-  }
-})
+    },
+  },
+});
 
 const allNotes = {
   _id: '_design/all_notes',
   views: {
     all_notes: {
-      map: 'function(doc) { if (doc.data_type == "note") { emit(doc._id, true); } }'
-    }
-  }
-}
+      map: 'function(doc) { if (doc.data_type == "note") { emit(doc._id, true); } }',
+    },
+  },
+};
 
 db.get('_design/all_notes')
   .then((doc) => {
-    Vue.set(allNotes, '_rev', doc._rev)
+    Vue.set(allNotes, '_rev', doc._rev);
   })
   .catch(() => { }) // no problem
   .finally(() => {
@@ -248,28 +248,28 @@ db.get('_design/all_notes')
   });
 
 dbSettings.get('locale')
-.then((doc) => {
-  store.commit('setLocale', {value: doc.value});
-})
-.catch(() => {}); // error are not important
+  .then((doc) => {
+    store.commit('setLocale', {value: doc.value});
+  })
+  .catch(() => {}); // error are not important
 
 dbSettings.get('dark_mode')
-.then((doc) => {
-  store.commit('setDarkMode', {value: doc.value});
-})
-.catch(() => {}); // error are not important
+  .then((doc) => {
+    store.commit('setDarkMode', {value: doc.value});
+  })
+  .catch(() => {}); // error are not important
 
 dbSettings.get('couch_url')
-.then((doc) => {
-  store.commit('setCouchURL', {value: doc.value});
-})
-.catch(() => {}); // error are not important
+  .then((doc) => {
+    store.commit('setCouchURL', {value: doc.value});
+  })
+  .catch(() => {}); // error are not important
 
 dbSettings.get('allow_automatic_update')
-.then((doc) => {
-  store.commit('setAllowAutomaticUpdate', {value: doc.value});
-})
-.catch(() => {}); // error are not important
+  .then((doc) => {
+    store.commit('setAllowAutomaticUpdate', {value: doc.value});
+  })
+  .catch(() => {}); // error are not important
 
 db.changes({
   include_docs: true,

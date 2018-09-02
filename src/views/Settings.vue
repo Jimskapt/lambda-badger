@@ -47,7 +47,7 @@ v-card
 const fallbackLocale = {
 	value: 'en-US',
 	translated: 'English (US)',
-	english: 'English (US)'
+	english: 'English (US)',
 }
 
 export default {
@@ -58,30 +58,31 @@ export default {
 			locale: fallbackLocale,
 			dark: false,
 			couchUrl: '',
-			allowAutomaticUpdate: false
-		}
+			allowAutomaticUpdate: false,
+		};
 	},
 	computed: {
 		available_locales() {
-			const result = {}
+			const result = {};
 
 			const that = this;
 			if (typeof(this.$i18n) !== 'undefined' && typeof(this.$i18n.messages) !== 'undefined') {
 				Object.keys(this.$i18n.messages).forEach((m) => {
 					const item = {
 							value: m,
-					}
-					item.translated = this.$i18n.messages[m]['translated_description']
-					item.english = this.$i18n.messages[m]['english_locale_description']
-					that.$set(result, m, item)
-				})
+					};
+
+					item.translated = this.$i18n.messages[m]['translated_description'];
+					item.english = this.$i18n.messages[m]['english_locale_description'];
+					that.$set(result, m, item);
+				});
 			}
 
-			return result
+			return result;
 		},
 		available_locales_array() {
-			return Object.values(this.available_locales)
-		}
+			return Object.values(this.available_locales);
+		},
 	},
 	methods: {
 		forceRefresh() {
@@ -95,13 +96,13 @@ export default {
 			this.$store.commit('setDarkMode', {value: this.dark});
 			this.$store.commit('setCouchURL', {value: this.couchUrl});
 			this.$store.commit('setAllowAutomaticUpdate', {value: this.allowAutomaticUpdate});
-		}
+		},
 	},
 	created() {
 		this.locale = this.$store.state.settings.locale;
     this.dark = this.$store.state.settings.darkMode;
     this.couchUrl = this.$store.state.settings.couchUrl;
     this.allowAutomaticUpdate = this.$store.state.settings.allowAutomaticUpdate;
-	}
+	},
 }
 </script>

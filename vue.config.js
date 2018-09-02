@@ -4,9 +4,9 @@ module.exports = {
       locale: 'en-US',
       fallbackLocale: 'en-US',
       localeDir: 'locales',
-      enableInSFC: true
-    }
+      enableInSFC: true,
+    },
   },
   baseUrl: '',
-  outputDir: './www'
-}
+  outputDir: './www',
+};
