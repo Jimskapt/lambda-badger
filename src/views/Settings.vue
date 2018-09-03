@@ -84,6 +84,20 @@ export default {
 			return Object.values(this.available_locales);
 		},
 	},
+	watch: {
+		'$store.state.settings.locale': function() {
+			this.locale = this.$store.state.settings.locale;
+		},
+		'$store.state.settings.darkMode': function() {
+			this.dark = this.$store.state.settings.darkMode;
+		},
+		'$store.state.settings.couchUrl': function() {
+			this.couchUrl = this.$store.state.settings.couchUrl;
+		},
+		'$store.state.settings.allowAutomaticUpdate': function() {
+			this.allowAutomaticUpdate = this.$store.state.settings.allowAutomaticUpdate;
+		},
+	},
 	methods: {
 		forceRefresh() {
 			location.reload();
@@ -100,9 +114,9 @@ export default {
 	},
 	created() {
 		this.locale = this.$store.state.settings.locale;
-    this.dark = this.$store.state.settings.darkMode;
-    this.couchUrl = this.$store.state.settings.couchUrl;
-    this.allowAutomaticUpdate = this.$store.state.settings.allowAutomaticUpdate;
+		this.dark = this.$store.state.settings.darkMode;
+		this.couchUrl = this.$store.state.settings.couchUrl;
+		this.allowAutomaticUpdate = this.$store.state.settings.allowAutomaticUpdate;
 	},
 }
 </script>
