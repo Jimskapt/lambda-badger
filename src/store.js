@@ -98,6 +98,7 @@ const store = new Vuex.Store({
         if (typeof(state.settings) === 'undefined') {
           state.settings = DEFAULT_SETTINGS;
         }
+        payload.value = payload.value.trim();
         state.settings.couchUrl = payload.value;
 
         dbSettings.get('couch_url')
@@ -115,6 +116,8 @@ const store = new Vuex.Store({
               // TODO
             }
           });
+
+        syncDB();
 
       } else {
         console.error('$store.mutations.setCouchURL : payload or payload.value is undefined');
@@ -142,6 +145,8 @@ const store = new Vuex.Store({
               // TODO
             }
           });
+        
+        syncDB();
 
       } else {
         console.error('$store.mutations.setAllowAutomaticUpdate : payload or payload.value is undefined');
@@ -218,6 +223,42 @@ const store = new Vuex.Store({
   },
 });
 
+let currentSync = null;
+let dbSync = null;
+function syncDB(force) {
+  /*
+  console.log('store.state.settings.couchUrl', store.state.settings.couchUrl);
+  console.log('currentSync', currentSync);
+  */
+  new Promise((resolve) => {
+    if(dbSync !== null && store.state.settings.couchUrl !== currentSync) {
+      console.log('cancel sync');
+      dbSync.cancel();
+
+      dbSync.on('complete', () => {
+        dbSync = null;
+        currentSync = null;
+        resolve();
+      });
+    } else {
+      resolve();
+    }
+  })
+    .then(() => {
+      // TODO : check URL
+      if(store.state.settings.couchUrl !== '' && (store.state.settings.allowAutomaticUpdate === true || force === true)) {
+        dbSync = db.sync(new PouchDB(store.state.settings.couchUrl))
+          .on('complete', () => {
+            console.log('sync OK');
+            currentSync = store.state.settings.couchUrl;
+          })
+          .on('error', (err) => { alert('Error while synchronising database : ' + err); }); // TODO
+      } else {
+        currentSync = null;
+      }
+    });
+}
+
 const allNotes = {
   _id: '_design/all_notes',
   views: {
@@ -280,4 +321,4 @@ db.changes({
     }
   });
 
-export default store;
+export { store, syncDB };

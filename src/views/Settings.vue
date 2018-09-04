@@ -28,7 +28,7 @@ v-card
 				v-flex(shrink, pr-2)
 					v-checkbox(v-model="allowAutomaticUpdate", :label="$t('Update automatically')", v-if="couchUrl.trim() !== ''")
 				v-flex(pl-2)
-					v-btn(block, v-if="couchUrl.trim() !== '' && !allowAutomaticUpdate")
+					v-btn(block, v-if="couchUrl.trim() !== '' && !allowAutomaticUpdate", @click="doSync")
 						v-icon sync
 						span {{ $t('Do a manual update') }}
 			v-btn(block, color='warning', @click='forceRefresh')
@@ -44,6 +44,8 @@ v-card
 </template>
 
 <script>
+import { syncDB } from '../store';
+
 const fallbackLocale = {
 	value: 'en-US',
 	translated: 'English (US)',
@@ -111,6 +113,9 @@ export default {
 			this.$store.commit('setCouchURL', {value: this.couchUrl});
 			this.$store.commit('setAllowAutomaticUpdate', {value: this.allowAutomaticUpdate});
 		},
+		doSync() {
+			syncDB(true);
+		}
 	},
 	created() {
 		this.locale = this.$store.state.settings.locale;
