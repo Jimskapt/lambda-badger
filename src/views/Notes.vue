@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-	h2 Notes
+	h2 {{ $t('Notes') }}
 	v-alert(type="info", :value="notes.length <= 0")
 		span {{ $t('There is no notes') }}.
 		br
@@ -10,7 +10,7 @@ div
 			v-card(hover, :to="{name: 'edit-note', params: {id: note._id}}")
 				v-card-text
 					pre {{ note.content }}
-	v-btn(large, fab, fixed, bottom, right, color="primary", :to="{name: 'edit-note', params: {id: 1}}")
+	v-btn(large, icon, fixed, bottom, right, color="primary", :to="{name: 'edit-note', params: {id: 1}}")
 		v-icon add
 </template>
 

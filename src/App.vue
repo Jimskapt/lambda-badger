@@ -7,6 +7,8 @@ v-app(:dark="darkMode")
       br
       router-link(to='/about') about
       br
+      router-link(to='/notes') {{ $t('Notes') }}
+      br
       router-link(to='/settings') {{ $t('Settings') }}
   v-toolbar(app)
     v-toolbar-side-icon(@click.stop='drawer = !drawer')

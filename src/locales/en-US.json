@@ -33,5 +33,6 @@
   "The url of your CouchDB-like database": "The url of your CouchDB-like database",
   "optional": "optionnel",
   "Do a manual update": "Do a manual update",
-  "Update automatically": "Update automatically"
+  "Update automatically": "Update automatically",
+  "Notes": "Notes"
 }
