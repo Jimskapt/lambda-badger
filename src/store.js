@@ -14,7 +14,7 @@ const DEFAULT_SETTINGS = {
   locale: 'en-US',
   couchUrl: '',
   darkMode: false,
-  // allowAutomaticUpdate: false
+  allowAutomaticUpdate: false
 };
 
 const store = new Vuex.Store({
@@ -116,14 +116,11 @@ const store = new Vuex.Store({
               // TODO
             }
           });
-
-        syncDB();
-
       } else {
         console.error('$store.mutations.setCouchURL : payload or payload.value is undefined');
       }
     },
-    /*setAllowAutomaticUpdate(state, payload) {
+    setAllowAutomaticUpdate(state, payload) {
       if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
         if (typeof(state.settings) === 'undefined') {
           state.settings = DEFAULT_SETTINGS;
@@ -145,13 +142,10 @@ const store = new Vuex.Store({
               // TODO
             }
           });
-        
-        syncDB();
-
       } else {
         console.error('$store.mutations.setAllowAutomaticUpdate : payload or payload.value is undefined');
       }
-    },*/
+    },
   },
   actions: {
     fetchAllNotes(context) {
@@ -225,17 +219,17 @@ const store = new Vuex.Store({
 
 let currentSync = null;
 let dbSync = null;
-function syncDB(/*force*/) {
+function syncDB(force) {
   new Promise((resolve) => {
     if(dbSync !== null && store.state.settings.couchUrl !== currentSync) {
-      /*console.log('cancel sync');
       dbSync.cancel();
 
       dbSync.on('complete', () => {
+        console.log('cancel sync');
         dbSync = null;
         currentSync = null;
         resolve();
-      });*/
+      });
       resolve();
     } else {
       resolve();
@@ -243,17 +237,31 @@ function syncDB(/*force*/) {
   })
     .then(() => {
       // TODO : check URL
-      if(store.state.settings.couchUrl !== ''/* && (store.state.settings.allowAutomaticUpdate === true || force === true)*/) {
+      if(store.state.settings.couchUrl !== '' && (store.state.settings.allowAutomaticUpdate === true || force === true)) {
         dbSync = db.sync(new PouchDB(store.state.settings.couchUrl), { live: true, retry: true })
-          .on('complete', () => {
+          .on('active', () => {
             console.log('sync OK');
             currentSync = store.state.settings.couchUrl;
+
+            if(force) {
+              setTimeout(function() {
+                dbSync.cancel();
+
+                dbSync.on('complete', () => {
+                  console.log('stop sync');
+                  dbSync = null;
+                  currentSync = null;
+                });
+              }, 2000);
+            }
           })
           .on('error', (err) => { alert('CPE0006: Error while synchronising database : ' + err); }); // TODO
       } else {
+        console.log('no sync');
         currentSync = null;
       }
-    });
+    })
+    .catch((err) => { alert('CPE0007: ' + err); });
 }
 
 const allNotes = {
@@ -300,17 +308,15 @@ dbSettings.get('dark_mode')
 dbSettings.get('couch_url')
   .then((doc) => {
     store.commit('setCouchURL', {value: doc.value});
-    syncDB();
   })
   .catch(() => {}); // error are not important
 
-/*
 dbSettings.get('allow_automatic_update')
   .then((doc) => {
     store.commit('setAllowAutomaticUpdate', {value: doc.value});
+    syncDB();
   })
   .catch(() => {}); // error are not important
-*/
 
 db.setMaxListeners(20);
 db.changes({

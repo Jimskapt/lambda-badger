@@ -24,14 +24,13 @@ v-card
 				prepend-icon='database'
 				clearable
 			)
-			//-
-				v-layout
-					v-flex(shrink, pr-2)
-						v-checkbox(v-model="allowAutomaticUpdate", :label="$t('Update automatically')", v-if="couchUrl.trim() !== ''")
-					v-flex(pl-2)
-						v-btn(block, v-if="couchUrl.trim() !== '' && !allowAutomaticUpdate", @click="doSync")
-							v-icon sync
-							span {{ $t('Do a manual update') }}
+			v-layout
+				v-flex(shrink, pr-2)
+					v-checkbox(v-model="allowAutomaticUpdate", :label="$t('Update automatically')", v-if="couchUrl.trim() !== ''")
+				v-flex(pl-2)
+					v-btn(block, v-if="couchUrl.trim() !== '' && !allowAutomaticUpdate", @click="doSync")
+						v-icon sync
+						span {{ $t('Do a manual update') }}
 			v-btn(block, color='warning', @click='forceRefresh')
 				v-icon refresh
 				span {{ $t('Debug : refresh page') }}
@@ -45,7 +44,7 @@ v-card
 </template>
 
 <script>
-// import { syncDB } from '../store';
+import { syncDB } from '../store';
 
 const fallbackLocale = {
 	value: 'en-US',
@@ -61,7 +60,7 @@ export default {
 			locale: fallbackLocale,
 			dark: false,
 			couchUrl: '',
-			// allowAutomaticUpdate: false,
+			allowAutomaticUpdate: false,
 		};
 	},
 	computed: {
@@ -97,9 +96,9 @@ export default {
 		'$store.state.settings.couchUrl': function() {
 			this.couchUrl = this.$store.state.settings.couchUrl;
 		},
-		/*'$store.state.settings.allowAutomaticUpdate': function() {
+		'$store.state.settings.allowAutomaticUpdate': function() {
 			this.allowAutomaticUpdate = this.$store.state.settings.allowAutomaticUpdate;
-		},*/
+		},
 	},
 	methods: {
 		forceRefresh() {
@@ -112,11 +111,15 @@ export default {
 
 			this.$store.commit('setDarkMode', {value: this.dark});
 			this.$store.commit('setCouchURL', {value: this.couchUrl});
-			// this.$store.commit('setAllowAutomaticUpdate', {value: this.allowAutomaticUpdate});
+			this.$store.commit('setAllowAutomaticUpdate', {value: this.allowAutomaticUpdate});
+
+			if(this.allowAutomaticUpdate) {
+				this.doSync();
+			}
 		},
-		/*doSync() {
+		doSync() {
 			syncDB(true);
-		}*/
+		}
 	},
 	created() {
 		this.locale = this.$store.state.settings.locale;
