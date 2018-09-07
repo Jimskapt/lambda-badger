@@ -13,6 +13,9 @@ v-app(:dark="darkMode")
   v-toolbar(app)
     v-toolbar-side-icon(@click.stop='drawer = !drawer')
     v-toolbar-title(v-text='appTitle')
+    v-spacer
+    v-btn(icon, :color="($store.state.settings.currentSync !== null) ? 'success' : 'error'")
+      v-icon storage
   v-content
     v-container
       router-view

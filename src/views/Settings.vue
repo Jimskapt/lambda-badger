@@ -24,13 +24,13 @@ v-card
 				prepend-icon='database'
 				clearable
 			)
-			v-layout
-				v-flex(shrink, pr-2)
+			v-layout(row, wrap)
+				v-flex(shrink, pr-2, xs12, sm6)
 					v-checkbox(v-model="allowAutomaticUpdate", :label="$t('Update automatically')", v-if="couchUrl.trim() !== ''")
-				v-flex(pl-2)
+				v-flex(pl-2, xs12, sm6)
 					v-btn(block, v-if="couchUrl.trim() !== '' && !allowAutomaticUpdate", @click="doSync")
 						v-icon sync
-						span {{ $t('Do a manual update') }}
+						span {{ $t('Manual update') }}
 			v-btn(block, color='warning', @click='forceRefresh')
 				v-icon refresh
 				span {{ $t('Debug : refresh page') }}
@@ -44,8 +44,6 @@ v-card
 </template>
 
 <script>
-import { syncDB } from '../store';
-
 const fallbackLocale = {
 	value: 'en-US',
 	translated: 'English (US)',
@@ -114,11 +112,13 @@ export default {
 			this.$store.commit('setAllowAutomaticUpdate', {value: this.allowAutomaticUpdate});
 
 			if(this.allowAutomaticUpdate) {
-				this.doSync();
+				this.$store.dispatch('startSyncDB');
+			} else {
+				this.$store.dispatch('stopSyncDB');
 			}
 		},
 		doSync() {
-			syncDB(true);
+			this.$store.dispatch('startSyncDB', {force: true});
 		}
 	},
 	created() {

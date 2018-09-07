@@ -14,8 +14,11 @@ const DEFAULT_SETTINGS = {
   locale: 'en-US',
   couchUrl: '',
   darkMode: false,
-  allowAutomaticUpdate: false
+  allowAutomaticUpdate: false,
+  currentSync: null,
 };
+
+let dbSync = null;
 
 const store = new Vuex.Store({
   strict: true,
@@ -146,6 +149,17 @@ const store = new Vuex.Store({
         console.error('$store.mutations.setAllowAutomaticUpdate : payload or payload.value is undefined');
       }
     },
+    setCurrentSync(state, payload) {
+      if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
+        if (typeof(state.settings) === 'undefined') {
+          state.settings = DEFAULT_SETTINGS;
+        }
+
+        state.settings.currentSync = payload.value;
+      } else {
+        console.error('$store.mutations.setAllowAutomaticUpdate : payload or payload.value is undefined');
+      }
+    },
   },
   actions: {
     fetchAllNotes(context) {
@@ -214,55 +228,58 @@ const store = new Vuex.Store({
         }
       });
     },
+    startSyncDB(context, payload) {
+      if(typeof(payload) === 'undefined') {
+        payload = {
+          force: false,
+        };
+      }
+
+      new Promise((resolve) => {
+        if(dbSync !== null && store.state.settings.couchUrl !== store.state.settings.currentSync) {
+          context.dispatch('stopSyncDB').then(() => { resolve(); });
+        } else {
+          resolve();
+        }
+      })
+        .then(() => {
+          // TODO : check URL
+          if(store.state.settings.couchUrl !== '' && (store.state.settings.allowAutomaticUpdate === true || payload.force === true)) {
+            dbSync = PouchDB.sync('cpdb', new PouchDB(store.state.settings.couchUrl), { live: true, retry: true })
+              .on('active', () => {
+                Vue.toasted.show(i18n.t('Connection to the remote database established'), { duration: 2000, type: 'success', icon: 'check' });
+                
+                store.commit('setCurrentSync', { value: store.state.settings.couchUrl });
+    
+                if(payload.force === true) {
+                  setTimeout(function() {
+                    context.dispatch('stopSyncDB');
+                  }, 2000);
+                }
+              })
+              .on('error', (err) => { alert('CPE0006: Error while synchronising database : ' + err); }); // TODO
+          }
+        })
+        .catch((err) => { alert('CPE0007: ' + err); });
+    },
+    stopSyncDB() {
+      return new Promise((resolve) => {
+        if(dbSync !== null) {
+          dbSync.cancel();
+    
+          dbSync.on('complete', () => {
+            Vue.toasted.show(i18n.t('Stopping connection to the remote database'), { duration: 2000, type: 'info', icon: 'delete' });
+            dbSync = null;
+            store.commit('setCurrentSync', { value: null });
+            resolve();
+          });
+        } else {
+          console.log('Database connection is already stopped');
+        }
+      });
+    },
   },
 });
-
-let currentSync = null;
-let dbSync = null;
-function syncDB(force) {
-  new Promise((resolve) => {
-    if(dbSync !== null && store.state.settings.couchUrl !== currentSync) {
-      dbSync.cancel();
-
-      dbSync.on('complete', () => {
-        console.log('cancel sync');
-        dbSync = null;
-        currentSync = null;
-        resolve();
-      });
-      resolve();
-    } else {
-      resolve();
-    }
-  })
-    .then(() => {
-      // TODO : check URL
-      if(store.state.settings.couchUrl !== '' && (store.state.settings.allowAutomaticUpdate === true || force === true)) {
-        dbSync = db.sync(new PouchDB(store.state.settings.couchUrl), { live: true, retry: true })
-          .on('active', () => {
-            console.log('sync OK');
-            currentSync = store.state.settings.couchUrl;
-
-            if(force) {
-              setTimeout(function() {
-                dbSync.cancel();
-
-                dbSync.on('complete', () => {
-                  console.log('stop sync');
-                  dbSync = null;
-                  currentSync = null;
-                });
-              }, 2000);
-            }
-          })
-          .on('error', (err) => { alert('CPE0006: Error while synchronising database : ' + err); }); // TODO
-      } else {
-        console.log('no sync');
-        currentSync = null;
-      }
-    })
-    .catch((err) => { alert('CPE0007: ' + err); });
-}
 
 const allNotes = {
   _id: '_design/all_notes',
@@ -314,7 +331,7 @@ dbSettings.get('couch_url')
 dbSettings.get('allow_automatic_update')
   .then((doc) => {
     store.commit('setAllowAutomaticUpdate', {value: doc.value});
-    syncDB();
+    store.dispatch('startSyncDB');
   })
   .catch(() => {}); // error are not important
 
@@ -327,8 +344,12 @@ db.changes({
   .on('change', (change) => {
     if (change.doc.data_type === 'note') {
       console.log('DB:change:', change.doc);
+      Vue.toasted.show(i18n.t('A note has been updated (or added)'), { duration: 2000, type: 'info', icon: 'check' });
       store.commit('setNote', { data: change.doc });
     }
+  })
+  .on('error', (err) => {
+    console.log('zrfrfgazrgerg', err);
   });
 
-export { store, syncDB };
+export default store;

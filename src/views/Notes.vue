@@ -4,7 +4,7 @@ div
 	v-alert(type="info", :value="notes.length <= 0")
 		span {{ $t('There is no notes') }}.
 		br
-		router-link(:to="{name: 'edit-note', params: {id: 1}}") {{ $t('Create') + ' ' + $t('a note') }}
+		router-link(style="color:white;", :to="{name: 'edit-note', params: {id: 1}}") {{ $t('Create') + ' ' + $t('a note') }}
 	v-layout(wrap)
 		v-flex(v-for="note in notes", :key="note._id", pa-1, d-flex)
 			v-card(hover, :to="{name: 'edit-note', params: {id: note._id}}")
