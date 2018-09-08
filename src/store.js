@@ -28,22 +28,36 @@ const store = new Vuex.Store({
   },
   mutations: {
     setNote(state, payload) {
-      if (typeof(payload.data) === 'undefined') {
+      if(typeof(payload.data) === 'undefined') {
         console.error('$store.mutations.setNote : missing "data" object on payload');
         return;
       }
-      if (typeof(payload.data._id) === 'undefined') {
+      if(typeof(payload.data._id) === 'undefined') {
         console.error('$store.mutations.setNote : missing "_id" value on payload.data');
         return;
       }
 
       Vue.set(state.notes, payload.data._id, payload.data);
+      Vue.toasted.show(i18n.t('A note has been updated (or added)'), { duration: 2000, type: 'success', icon: 'check' });
+    },
+    deleteNote(state, payload) {
+      if(typeof(payload.data) === 'undefined') {
+        console.error('$store.mutations.deleteNote : missing "data" object in payload');
+        return;
+      }
+      if(typeof(payload.data._id) === 'undefined') {
+        console.error('$store.mutations.deleteNote : missing "_id" key on payload object');
+        return;
+      }
+
+      Vue.delete(state.notes, payload.data._id);
+      Vue.toasted.show(i18n.t('A note has deleted'), { duration: 2000, type: 'success', icon: 'delete' });
     },
     setLocale(state, payload) {
-      if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
+      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
         // TODO check if the key is in available locales
 
-        if (typeof(state.settings) === 'undefined') {
+        if(typeof(state.settings) === 'undefined') {
           state.settings = DEFAULT_SETTINGS;
         }
         state.settings.locale = payload.value;
@@ -55,7 +69,7 @@ const store = new Vuex.Store({
             dbSettings.put(doc);
           })
           .catch((err) => {
-            if (err.name === 'not_found') {
+            if(err.name === 'not_found') {
               dbSettings.post({
                 _id: 'locale',
                 value: payload.value,
@@ -70,8 +84,8 @@ const store = new Vuex.Store({
       }
     },
     setDarkMode(state, payload) {
-      if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
-        if (typeof(state.settings) === 'undefined') {
+      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
+        if(typeof(state.settings) === 'undefined') {
           state.settings = DEFAULT_SETTINGS;
         }
         state.settings.darkMode = payload.value;
@@ -82,7 +96,7 @@ const store = new Vuex.Store({
             dbSettings.put(doc);
           })
           .catch((err) => {
-            if (err.name === 'not_found') {
+            if(err.name === 'not_found') {
               dbSettings.post({
                 _id: 'dark_mode',
                 value: payload.value,
@@ -97,8 +111,8 @@ const store = new Vuex.Store({
       }
     },
     setCouchURL(state, payload) {
-      if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
-        if (typeof(state.settings) === 'undefined') {
+      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
+        if(typeof(state.settings) === 'undefined') {
           state.settings = DEFAULT_SETTINGS;
         }
         payload.value = payload.value.trim();
@@ -110,7 +124,7 @@ const store = new Vuex.Store({
             dbSettings.put(doc);
           })
           .catch((err) => {
-            if (err.name === 'not_found') {
+            if(err.name === 'not_found') {
               dbSettings.post({
                 _id: 'couch_url',
                 value: payload.value,
@@ -124,8 +138,8 @@ const store = new Vuex.Store({
       }
     },
     setAllowAutomaticUpdate(state, payload) {
-      if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
-        if (typeof(state.settings) === 'undefined') {
+      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
+        if(typeof(state.settings) === 'undefined') {
           state.settings = DEFAULT_SETTINGS;
         }
         state.settings.allowAutomaticUpdate = payload.value;
@@ -136,7 +150,7 @@ const store = new Vuex.Store({
             dbSettings.put(doc);
           })
           .catch((err) => {
-            if (err.name === 'not_found') {
+            if(err.name === 'not_found') {
               dbSettings.post({
                 _id: 'allow_automatic_update',
                 value: payload.value,
@@ -150,8 +164,8 @@ const store = new Vuex.Store({
       }
     },
     setCurrentSync(state, payload) {
-      if (typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
-        if (typeof(state.settings) === 'undefined') {
+      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
+        if(typeof(state.settings) === 'undefined') {
           state.settings = DEFAULT_SETTINGS;
         }
 
@@ -178,7 +192,7 @@ const store = new Vuex.Store({
     getNote(context, payload) {
       return new Promise((resolve, reject) => {
         const found = context.state.notes[payload.id];
-        if (typeof(found) !== 'undefined') {
+        if(typeof(found) !== 'undefined') {
           resolve({find: true, doc: cloneDeep(found)});
         } else {
           db.get(payload.id)
@@ -193,13 +207,13 @@ const store = new Vuex.Store({
     },
     setNote(context, payload) {
       return new Promise((resolve, reject) => {
-        if (typeof(payload.data) === 'undefined') {
+        if(typeof(payload.data) === 'undefined') {
           reject('$store.actions.setNote : missing "data" object in payload');
           return;
         }
 
         const okDB = (res) => {
-          if (res.ok) {
+          if(res.ok) {
             db.get(res.id)
               .then((doc) => {
                 Vue.set(res, 'doc', doc);
@@ -209,11 +223,11 @@ const store = new Vuex.Store({
                 reject(err);
               });
           } else {
-            reject({message: 'not ok'});
+            reject({message: 'not ok'}); // TODO
           }
         };
 
-        if (typeof(payload.data._id) === 'undefined') {
+        if(typeof(payload.data._id) === 'undefined') {
           db.post(payload.data)
             .then((res) => {
               okDB(res);
@@ -223,6 +237,36 @@ const store = new Vuex.Store({
           db.put(payload.data)
             .then((res) => {
               okDB(res);
+            })
+            .catch((err) => { reject(err); });
+        }
+      });
+    },
+    deleteNote(context, payload) {
+      return new Promise((resolve, reject) => {
+        if(typeof(payload.data) === 'undefined') {
+          reject('$store.actions.deleteNote : missing "data" object in payload');
+          return;
+        }
+        if(typeof(payload.data._id) === 'undefined') {
+          reject('$store.actions.deleteNote : missing "_id" key on payload object');
+          return;
+        }
+        if(typeof(payload.data._rev) === 'undefined') {
+          reject('$store.actions.deleteNote : missing "_rev" key on payload object');
+          return;
+        }
+
+        let confirmedDelete = (payload.force === true);
+        if(confirmedDelete !== true) {
+          confirmedDelete = confirm(i18n.t('Please confirm the deletion of this note'));
+        }
+
+        if(confirmedDelete) {
+          db.remove(payload.data)
+            .then((res) => {
+              context.commit('deleteNote', payload);
+              resolve(res);
             })
             .catch((err) => { reject(err); });
         }
@@ -247,7 +291,7 @@ const store = new Vuex.Store({
           if(store.state.settings.couchUrl !== '' && (store.state.settings.allowAutomaticUpdate === true || payload.force === true)) {
             dbSync = PouchDB.sync('cpdb', new PouchDB(store.state.settings.couchUrl), { live: true, retry: true })
               .on('active', () => {
-                Vue.toasted.show(i18n.t('Connection to the remote database established'), { duration: 2000, type: 'success', icon: 'check' });
+                Vue.toasted.show(i18n.t('Connection to the remote database established'), { duration: 2000, type: 'success', icon: 'storage' });
                 
                 store.commit('setCurrentSync', { value: store.state.settings.couchUrl });
     
@@ -268,9 +312,9 @@ const store = new Vuex.Store({
           dbSync.cancel();
     
           dbSync.on('complete', () => {
-            Vue.toasted.show(i18n.t('Stopping connection to the remote database'), { duration: 2000, type: 'info', icon: 'delete' });
             dbSync = null;
             store.commit('setCurrentSync', { value: null });
+            Vue.toasted.show(i18n.t('Stopping connection to the remote database'), { duration: 2000, type: 'success', icon: 'close' });
             resolve();
           });
         } else {
@@ -285,7 +329,7 @@ const allNotes = {
   _id: '_design/all_notes',
   views: {
     all_notes: {
-      map: 'function(doc) { if (doc.data_type == "note") { emit(doc._id, true); } }',
+      map: 'function(doc) { if(doc.data_type == "note") { emit(doc._id, true); } }',
     },
   },
 };
@@ -342,10 +386,12 @@ db.changes({
   include_docs: true,
 })
   .on('change', (change) => {
-    if (change.doc.data_type === 'note') {
+    if(change.doc.data_type === 'note') {
       console.log('DB:change:', change.doc);
-      Vue.toasted.show(i18n.t('A note has been updated (or added)'), { duration: 2000, type: 'info', icon: 'check' });
       store.commit('setNote', { data: change.doc });
+    } else if(change.deleted === true && typeof(store.state.notes[change.doc._id]) !== 'undefined') {
+      console.log('DB:delete:', change.doc);
+      store.commit('deleteNote', { data: change.doc });
     }
   })
   .on('error', (err) => {

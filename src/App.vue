@@ -1,6 +1,6 @@
 <template lang="pug">
 v-app(:dark="darkMode")
-  v-navigation-drawer(persistent, v-model='drawer', fixed, app)
+  v-navigation-drawer(persistent, v-model="drawer", fixed, app)
     v-toolbar
       v-toolbar-title {{ appName }}
       v-spacer
@@ -23,10 +23,10 @@ v-app(:dark="darkMode")
         v-list-tile-content
           v-list-tile-title {{ $t('Help') }}
   v-toolbar(app)
-    v-toolbar-side-icon(@click.stop='drawer = !drawer')
+    v-toolbar-side-icon(@click.stop="drawer = !drawer")
     v-toolbar-title {{ appName }}
     v-spacer
-    v-btn(icon, :color="($store.state.settings.currentSync !== null) ? 'success' : 'error'")
+    v-btn(icon, :color="($store.state.settings.currentSync !== null) ? 'success' : 'error'", :to="{name: 'settings'}")
       v-icon storage
   v-content
     v-container

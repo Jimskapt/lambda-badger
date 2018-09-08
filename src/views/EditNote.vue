@@ -13,9 +13,13 @@
 				v-textarea(:label="$t('Content')", v-model="dbDoc.content")
 				v-layout(column, mt-2)
 					v-flex
-						v-btn(large, block, color="primary", @click="save")
+						v-btn(large, block, color="primary", @click="saveNote")
 							v-icon {{ (exists) ? 'save' : 'add' }}
 							span {{ (exists) ? $t("Save") : $t("Create") }}
+					v-flex(v-if="exists")
+						v-btn(large, block, color="error", @click="deleteNote")
+							v-icon delete
+							span {{ $t('Delete this note') }}
 </template>
 
 <script>
@@ -40,7 +44,7 @@ export default {
 			const that = this;
 			this.$store.dispatch('getNote', {id: value})
 				.then((res) => {
-					if (res.find) {
+					if(res.find) {
 						that.$set(this, 'dbDoc', res.doc);
 					} else {
 						that.$set(this, 'dbDoc', {
@@ -57,12 +61,12 @@ export default {
 					});
 				});
 		},
-		save() {
+		saveNote() {
 			const that = this;
 			this.$store.dispatch('setNote', {data: this.dbDoc})
 				.then((res) => {
-					if (res.ok) {
-						if (typeof(res.doc) !== 'undefined') {
+					if(res.ok) {
+						if(typeof(res.doc) !== 'undefined') {
 							that.$set(this, 'dbDoc', res.doc);
 						} else {
 							console.error('CPE0003', res);
@@ -74,6 +78,18 @@ export default {
 				})
 				.catch((err) => { console.error('CPE0002:', err); }); // TODO
 		},
+		deleteNote() {
+			this.$store.dispatch('deleteNote', {data: this.dbDoc})
+				.then((res) => {
+					if(res.ok) {
+						this.$router.push({ name: 'notes' });
+					} else {
+						console.error('CPE0009:', res);
+						// TODO
+					}
+				})
+				.catch((err) => { console.error('CPE0010:', err); }); // TODO
+		}
 	},
 	created() {
 		this.id_changed(this.id);
@@ -81,7 +97,7 @@ export default {
 		const that = this;
 		this.$store.dispatch('getNote', {id: this.id})
 			.then((res) => {
-				if (res.find) {
+				if(res.find) {
 					that.$set(this, 'dbDoc', res.doc);
 				} else {
 					that.$set(this, 'dbDoc', {

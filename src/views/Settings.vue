@@ -1,19 +1,19 @@
 <template lang="pug">
 v-card
-	v-toolbar(dark, color='primary')
+	v-toolbar(dark, color="primary")
 		v-btn(icon)
 			v-icon settings
-		v-toolbar-title {{ $t("Settings") }}
+		v-toolbar-title {{ $t('Settings') }}
 	v-card-text
 		v-container
 			v-autocomplete(
-				:items='available_locales_array',
-				item-text='english',
-				item-value='value',
-				:hint='`${locale.translated}`',
-				v-model='locale',
+				:items="available_locales_array",
+				item-text="english",
+				item-value="value",
+				:hint="`${locale.translated}`",
+				v-model="locale",
 				:label="$t('Locale') + ' (locale)'",
-				prepend-icon='language',
+				prepend-icon="language",
 				autocomplete,
 				return-object
 			)
@@ -21,7 +21,7 @@ v-card
 			v-text-field(
 				v-model="couchUrl",
 				:label="$t('The url of your CouchDB-like database') + ' (' + $t('optional') + ')'",
-				prepend-icon='database'
+				prepend-icon="database"
 				clearable
 			)
 			v-layout(row, wrap)
@@ -31,16 +31,16 @@ v-card
 					v-btn(block, v-if="couchUrl.trim() !== '' && !allowAutomaticUpdate", @click="doSync")
 						v-icon sync
 						span {{ $t('Manual update') }}
-			v-btn(block, color='warning', @click='forceRefresh')
+			v-btn(block, color="warning", @click="forceRefresh")
 				v-icon refresh
 				span {{ $t('Debug : refresh page') }}
 		v-card-actions
-			v-btn(block, color='error', @click='$router.go(-1)')
+			v-btn(block, color="error", @click="$router.go(-1)")
 				v-icon clear
-				span {{ $t("Abort") }}
-			v-btn(block, color='success', @click='save')
+				span {{ $t('Abort') }}
+			v-btn(block, color="success", @click="save")
 				v-icon done
-				span {{ $t("OK") }}
+				span {{ $t('OK') }}
 </template>
 
 <script>
@@ -66,7 +66,7 @@ export default {
 			const result = {};
 
 			const that = this;
-			if (typeof(this.$i18n) !== 'undefined' && typeof(this.$i18n.messages) !== 'undefined') {
+			if(typeof(this.$i18n) !== 'undefined' && typeof(this.$i18n.messages) !== 'undefined') {
 				Object.keys(this.$i18n.messages).forEach((m) => {
 					const item = {
 							value: m,
@@ -103,7 +103,7 @@ export default {
 			location.reload();
 		},
 		save() {
-			if (typeof(this.locale) !== 'undefined' && typeof(this.locale.value) !== 'undefined') {
+			if(typeof(this.locale) !== 'undefined' && typeof(this.locale.value) !== 'undefined') {
 				this.$store.commit('setLocale', {value: this.locale.value});
 			}
 

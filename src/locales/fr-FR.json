@@ -39,5 +39,8 @@
   "Connection to the remote database established": "Connexion à la base de données distante établie",
   "Stopping connection to the remote database": "Arrêt de la connextion à la base de données distante",
   "A note has been updated (or added)": "Une note a été mise à jour (ou a été ajoutée)",
-  "Help": "Aide"
+  "Help": "Aide",
+  "Delete this note": "Supprimer cette note",
+  "Please confirm the deletion of this note": "Veuillez confirmer la suppression de cette note",
+  "A note has deleted": "Une note a été supprimée"
 }

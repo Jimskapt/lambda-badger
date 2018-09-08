@@ -39,5 +39,8 @@
   "Connection to the remote database established": "Connection to the remote database established",
   "Stopping connection to the remote database": "Stopping connection to the remote database",
   "A note has been updated (or added)": "A note has been updated (or added)",
-  "Help": "Help"
+  "Help": "Help",
+  "Delete this note": "Delete this note",
+  "Please confirm the deletion of this note": "Please confirm the deletion of this note",
+  "A note has deleted": "A note has deleted"
 }
