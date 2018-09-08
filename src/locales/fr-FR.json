@@ -26,9 +26,10 @@
   "Abort": "Annuler",
   "OK": "OK",
   "Content": "Contenu",
-  "Create": "Create",
+  "Create": "Créer",
   "Go back": "Retour",
-  "a note": "une note",
+  "Create a note": "Créer une note",
+  "Edit the note": "Modifier la note",
   "There is no notes": "Il n'y a pas de notes",
   "The url of your CouchDB-like database": "L'adresse de votre base de donnée compatible CouchDB",
   "optional": "faculatif",
@@ -37,5 +38,6 @@
   "Notes": "Notes",
   "Connection to the remote database established": "Connexion à la base de données distante établie",
   "Stopping connection to the remote database": "Arrêt de la connextion à la base de données distante",
-  "A note has been updated (or added)": "Une note a été mise à jour (ou a été ajoutée)"
+  "A note has been updated (or added)": "Une note a été mise à jour (ou a été ajoutée)",
+  "Help": "Aide"
 }

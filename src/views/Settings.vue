@@ -48,7 +48,7 @@ const fallbackLocale = {
 	value: 'en-US',
 	translated: 'English (US)',
 	english: 'English (US)',
-}
+};
 
 export default {
 	name: 'settings',
@@ -127,5 +127,5 @@ export default {
 		this.couchUrl = this.$store.state.settings.couchUrl;
 		this.allowAutomaticUpdate = this.$store.state.settings.allowAutomaticUpdate;
 	},
-}
+};
 </script>

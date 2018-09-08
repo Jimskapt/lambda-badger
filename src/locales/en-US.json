@@ -28,7 +28,8 @@
   "Content": "Content",
   "Create": "Create",
   "Go back": "Go back",
-  "a note": "a note",
+  "Create a note": "Create a note",
+  "Edit the note": "Edit the note",
   "There is no notes": "There is no notes",
   "The url of your CouchDB-like database": "The url of your CouchDB-like database",
   "optional": "optionnel",
@@ -37,5 +38,6 @@
   "Notes": "Notes",
   "Connection to the remote database established": "Connection to the remote database established",
   "Stopping connection to the remote database": "Stopping connection to the remote database",
-  "A note has been updated (or added)": "A note has been updated (or added)"
+  "A note has been updated (or added)": "A note has been updated (or added)",
+  "Help": "Help"
 }

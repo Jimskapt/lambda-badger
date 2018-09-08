@@ -1,18 +1,30 @@
 <template lang="pug">
 v-app(:dark="darkMode")
   v-navigation-drawer(persistent, v-model='drawer', fixed, app)
-    h1(style="text-align:center;") {{ appTitle }}
-    p(style="text-align:center;")
-      router-link(to='/') Home
-      br
-      router-link(to='/about') about
-      br
-      router-link(to='/notes') {{ $t('Notes') }}
-      br
-      router-link(to='/settings') {{ $t('Settings') }}
+    v-toolbar
+      v-toolbar-title {{ appName }}
+      v-spacer
+      span(class="caption") {{ appVersion }}
+    v-list
+      v-list-tile(:to="{name: 'notes'}")
+        v-list-tile-action
+          v-icon event_note
+        v-list-tile-content
+          v-list-tile-title {{ $t('Notes') }}
+      v-list-tile(:to="{name: 'settings'}")
+        v-list-tile-action
+          v-icon settings
+        v-list-tile-content
+          v-list-tile-title {{ $t('Settings') }}
+      v-divider
+      v-list-tile(href="https://github.com/Jimskapt/catullus-proteus", target="_blank")
+        v-list-tile-action
+          v-icon open_in_new
+        v-list-tile-content
+          v-list-tile-title {{ $t('Help') }}
   v-toolbar(app)
     v-toolbar-side-icon(@click.stop='drawer = !drawer')
-    v-toolbar-title(v-text='appTitle')
+    v-toolbar-title {{ appName }}
     v-spacer
     v-btn(icon, :color="($store.state.settings.currentSync !== null) ? 'success' : 'error'")
       v-icon storage
@@ -30,7 +42,8 @@ export default {
     return {
       drawer: false,
       darkMode: false,
-      appTitle: pkgInfo.displayName + ' ' + pkgInfo.version,
+      appVersion: pkgInfo.version,
+      appName: pkgInfo.displayName,
     };
   },
   created() {

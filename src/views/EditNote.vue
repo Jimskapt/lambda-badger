@@ -1,21 +1,21 @@
 <template lang="pug">
-	v-container
+	div
 		v-container
 			v-btn(color="secondary", @click="$router.back()")
 				v-icon chevron_left
 				span {{ $t('Go back') }}
-		h2
-			span(v-if="exists") Edit 
-			span(v-else) Create 
-			| note 
-			span(v-if="exists") \#{{ dbDoc._id }}
-		v-textarea(:label="$t('Content')", v-model="dbDoc.content")
-		v-btn(block, color="primary", @click="save", v-if="exists")
-			v-icon save
-			span {{ $t("Save") }}
-		v-btn(block, color="primary", @click="save", v-else)
-			v-icon add
-			span {{ $t("Create") }}
+		v-card
+			v-toolbar(color="primary")
+				v-toolbar-side-icon
+					v-icon {{ (exists) ? 'edit' : 'add' }}
+				v-toolbar-title {{ (exists) ? $t('Edit the note') : $t('Create a note') }}
+			v-card-text
+				v-textarea(:label="$t('Content')", v-model="dbDoc.content")
+				v-layout(column, mt-2)
+					v-flex
+						v-btn(large, block, color="primary", @click="save")
+							v-icon {{ (exists) ? 'save' : 'add' }}
+							span {{ (exists) ? $t("Save") : $t("Create") }}
 </template>
 
 <script>
