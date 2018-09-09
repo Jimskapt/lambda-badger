@@ -38,7 +38,10 @@ const store = new Vuex.Store({
       }
 
       Vue.set(state.notes, payload.data._id, payload.data);
-      Vue.toasted.show(i18n.t('A note has been updated (or added)'), { duration: 2000, type: 'success', icon: 'check' });
+      
+      if(payload.no_toast !== true) {
+        Vue.toasted.show(i18n.t('A note has been updated (or added)'), { duration: 2000, type: 'info', icon: 'edit' });
+      }
     },
     deleteNote(state, payload) {
       if(typeof(payload.data) === 'undefined') {
@@ -51,7 +54,7 @@ const store = new Vuex.Store({
       }
 
       Vue.delete(state.notes, payload.data._id);
-      Vue.toasted.show(i18n.t('A note has deleted'), { duration: 2000, type: 'success', icon: 'delete' });
+      Vue.toasted.show(i18n.t('A note has deleted'), { duration: 2000, type: 'info', icon: 'delete' });
     },
     setLocale(state, payload) {
       if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
@@ -181,7 +184,7 @@ const store = new Vuex.Store({
         db.query('all_notes/all_notes', {include_docs: true})
           .then((res) => {
             res.rows.forEach((row) => {
-              context.commit('setNote', {data: row.doc});
+              context.commit('setNote', {data: row.doc, no_toast: true});
             });
           })
           .catch((err) => {
@@ -226,6 +229,8 @@ const store = new Vuex.Store({
             reject({message: 'not ok'}); // TODO
           }
         };
+
+        payload.data.app_version = require('../package.json').version;
 
         if(typeof(payload.data._id) === 'undefined') {
           db.post(payload.data)
@@ -314,7 +319,7 @@ const store = new Vuex.Store({
           dbSync.on('complete', () => {
             dbSync = null;
             store.commit('setCurrentSync', { value: null });
-            Vue.toasted.show(i18n.t('Stopping connection to the remote database'), { duration: 2000, type: 'success', icon: 'close' });
+            Vue.toasted.show(i18n.t('Stopping connection to the remote database'), { duration: 2000, type: 'info', icon: 'close' });
             resolve();
           });
         } else {
@@ -337,17 +342,31 @@ const allNotes = {
 db.get('_design/all_notes')
   .then((doc) => {
     Vue.set(allNotes, '_rev', doc._rev);
-  })
-  .catch(() => { }) // no problem
-  .finally(() => {
-    db.put(allNotes)
-      .then(() => {
-        store.dispatch('fetchAllNotes');
-      })
-      .catch((err) => {
-        console.error('CPE0004: ', err);
-      });
 
+    if(doc.views.all_notes.map !== allNotes.views.all_notes.map) {
+      db.put(allNotes)
+        .then(() => {
+          console.log('_design/all_notes updated');
+        })
+        .catch((err) => {
+          console.error('CPE0004: ', err);
+        });
+    }
+  })
+  .catch((err) => { 
+    if(err.status === 404) {
+      db.post(allNotes)
+        .then(() => {
+          console.log('_design/all_notes created');
+        })
+        .catch((err2) => {
+          console.error('CPE0010: ', err2);
+        });
+    } else {
+      console.error('CPE0011: ', err);
+    }
+   })
+  .finally(() => {
     store.dispatch('fetchAllNotes')
       .catch((err) => {
         console.error('CPE0005: ', err);
