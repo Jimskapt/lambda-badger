@@ -1,5 +1,5 @@
 {
-  "name": "catullus-proteus",
+  "name": "lambda-badger",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -54,7 +54,7 @@
   "author": "Jimskapt",
   "license": "MIT",
   "description": "",
-  "displayName": "Catullus-Proteus",
+  "displayName": "Lambda Badger",
   "gitHooks": {
     "pre-commit": "lint-staged"
   },

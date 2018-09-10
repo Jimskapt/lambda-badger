@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">  <head>
+<html lang="en">
+  <head>
     <% if (VUE_APP_NODE_MODULES_PATH !== "false") { %><script>require('module').globalPaths.push('<%= VUE_APP_NODE_MODULES_PATH %>')</script><% } %>
     <% if (BASE_URL === './') { %><base href="app://./" /><% } %>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title>catullus-proteus</title>
+    <title>Lambda Badger</title>
   </head>
   <body>
     <noscript>
-      <strong>We're sorry but catullus-proteus doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong>We're sorry but Lambda Badger doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->

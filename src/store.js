@@ -7,8 +7,8 @@ import i18n from '@/i18n.js';
 
 Vue.use(Vuex);
 
-const db = new PouchDB('cpdb');
-const dbSettings = new PouchDB('cpdb-settings');
+const db = new PouchDB('lambda-badger-db');
+const dbSettings = new PouchDB('lambda-badger-settings');
 
 const DEFAULT_SETTINGS = {
   locale: 'en-US',
@@ -294,7 +294,7 @@ const store = new Vuex.Store({
         .then(() => {
           // TODO : check URL
           if(store.state.settings.couchUrl !== '' && (store.state.settings.allowAutomaticUpdate === true || payload.force === true)) {
-            dbSync = PouchDB.sync('cpdb', new PouchDB(store.state.settings.couchUrl), { live: true, retry: true })
+            dbSync = PouchDB.sync('lambda-badger-db', new PouchDB(store.state.settings.couchUrl), { live: true, retry: true })
               .on('active', () => {
                 Vue.toasted.show(i18n.t('Connection to the remote database established'), { duration: 2000, type: 'success', icon: 'storage' });
                 

@@ -1,4 +1,4 @@
-# Catullus Proteus
+# Lambda Badger
 
 ## Project setup
 ```

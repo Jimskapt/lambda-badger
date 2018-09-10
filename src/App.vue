@@ -17,7 +17,7 @@ v-app(:dark="darkMode")
         v-list-tile-content
           v-list-tile-title {{ $t('Settings') }}
       v-divider
-      v-list-tile(href="https://github.com/Jimskapt/catullus-proteus", target="_blank")
+      v-list-tile(href="https://github.com/Jimskapt/lambda-badger", target="_blank")
         v-list-tile-action
           v-icon open_in_new
         v-list-tile-content
