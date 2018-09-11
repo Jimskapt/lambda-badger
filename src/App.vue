@@ -16,12 +16,17 @@ v-app(:dark="darkMode")
           v-icon settings
         v-list-tile-content
           v-list-tile-title {{ $t('Settings') }}
+      v-list-tile(:to="{name: 'help'}")
+        v-list-tile-action
+          v-icon help
+        v-list-tile-content
+          v-list-tile-title {{ $t('Help') }}
       v-divider
       v-list-tile(href="https://github.com/Jimskapt/lambda-badger", target="_blank")
         v-list-tile-action
-          v-icon open_in_new
+          v-icon bookmarks
         v-list-tile-content
-          v-list-tile-title {{ $t('Help') }}
+          v-list-tile-title {{ $t('Website') }}
   v-toolbar(app)
     v-toolbar-side-icon(@click.stop="drawer = !drawer")
     v-toolbar-title {{ appName }}

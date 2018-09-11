@@ -4,6 +4,7 @@ import Router from 'vue-router';
 import Notes from './views/Notes.vue';
 import Settings from './views/Settings.vue';
 import EditNote from './views/EditNote.vue';
+import Help from './views/Help.vue';
 
 Vue.use(Router);
 
@@ -31,6 +32,11 @@ export default new Router({
       name: 'edit-note',
       component: EditNote,
       props: true,
+    },
+    {
+      path: '/help',
+      name: 'help',
+      component: Help,
     },
   ],
 });
