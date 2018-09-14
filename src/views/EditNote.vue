@@ -67,28 +67,31 @@ export default {
 				.then((res) => {
 					if(res.ok) {
 						if(typeof(res.doc) !== 'undefined') {
-							that.$set(this, 'dbDoc', res.doc);
+							that.$set(that, 'dbDoc', res.doc);
 						} else {
-							console.error('CPE0003', res);
+							that.$toasted.show('Error while fetching saving note', { duration: 4000, type: 'error', icon: 'warning' });
 						}
 					} else {
-						console.error('CPE0001:', res);
-						// TODO
+						that.$toasted.show('Error while saving note', { duration: 4000, type: 'error', icon: 'warning' });
 					}
 				})
-				.catch((err) => { console.error('CPE0002:', err); }); // TODO
+				.catch((err) => {
+					that.$toasted.show(err, { duration: 4000, type: 'error', icon: 'warning' });
+				});
 		},
 		deleteNote() {
+			const that = this;
 			this.$store.dispatch('deleteNote', {data: this.dbDoc})
 				.then((res) => {
 					if(res.ok) {
-						this.$router.push({ name: 'notes' });
+						that.$router.push({ name: 'notes' });
 					} else {
-						console.error('CPE0009:', res);
-						// TODO
+						that.$toasted.show('Error while deleting document', { duration: 4000, type: 'error', icon: 'warning' });
 					}
 				})
-				.catch((err) => { console.error('CPE0010:', err); }); // TODO
+				.catch((err) => {
+					that.$toasted.show(err, { duration: 4000, type: 'error', icon: 'warning' });
+				});
 		}
 	},
 	created() {

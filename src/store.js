@@ -66,6 +66,7 @@ const store = new Vuex.Store({
         state.settings.locale = payload.value;
         i18n.locale = payload.value;
 
+        const that = this;
         dbSettings.get('locale')
           .then((doc) => {
             doc.value = payload.value;
@@ -78,7 +79,7 @@ const store = new Vuex.Store({
                 value: payload.value,
               });
             } else {
-              // TODO
+              that.$toasted.show(err, { duration: 4000, type: 'error', icon: 'warning' });
             }
           });
 
@@ -93,6 +94,7 @@ const store = new Vuex.Store({
         }
         state.settings.darkMode = payload.value;
 
+        const that = this;
         dbSettings.get('dark_mode')
           .then((doc) => {
             doc.value = payload.value;
@@ -105,7 +107,7 @@ const store = new Vuex.Store({
                 value: payload.value,
               });
             } else {
-              // TODO
+              that.$toasted.show(err, { duration: 4000, type: 'error', icon: 'warning' });
             }
           });
 
@@ -121,6 +123,7 @@ const store = new Vuex.Store({
         payload.value = payload.value.trim();
         state.settings.couchUrl = payload.value;
 
+        const that = this;
         dbSettings.get('couch_url')
           .then((doc) => {
             doc.value = payload.value;
@@ -133,7 +136,7 @@ const store = new Vuex.Store({
                 value: payload.value,
               });
             } else {
-              // TODO
+              that.$toasted.show(err, { duration: 4000, type: 'error', icon: 'warning' });
             }
           });
       } else {
@@ -147,6 +150,7 @@ const store = new Vuex.Store({
         }
         state.settings.allowAutomaticUpdate = payload.value;
 
+        const that = this;
         dbSettings.get('allow_automatic_update')
           .then((doc) => {
             doc.value = payload.value;
@@ -159,7 +163,7 @@ const store = new Vuex.Store({
                 value: payload.value,
               });
             } else {
-              // TODO
+              that.$toasted.show(err, { duration: 4000, type: 'error', icon: 'warning' });
             }
           });
       } else {
@@ -226,7 +230,7 @@ const store = new Vuex.Store({
                 reject(err);
               });
           } else {
-            reject({message: 'not ok'}); // TODO
+            reject({message: 'error while saving document'});
           }
         };
 
@@ -284,6 +288,7 @@ const store = new Vuex.Store({
         };
       }
 
+      const that = this;
       new Promise((resolve) => {
         if(dbSync !== null && store.state.settings.couchUrl !== store.state.settings.currentSync) {
           context.dispatch('stopSyncDB').then(() => { resolve(); });
@@ -306,10 +311,14 @@ const store = new Vuex.Store({
                   }, 2000);
                 }
               })
-              .on('error', (err) => { alert('CPE0006: Error while synchronising database : ' + err); }); // TODO
+              .on('error', (err) => {
+                that.$toasted.show(err, { duration: 4000, type: 'error', icon: 'warning' });
+              });
           }
         })
-        .catch((err) => { alert('CPE0007: ' + err); });
+        .catch((err) => {
+          that.$toasted.show(err, { duration: 4000, type: 'error', icon: 'warning' });
+        });
     },
     stopSyncDB() {
       return new Promise((resolve) => {
@@ -414,7 +423,7 @@ db.changes({
     }
   })
   .on('error', (err) => {
-    console.log('zrfrfgazrgerg', err);
+    console.log(err);
   });
 
 export default store;

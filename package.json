@@ -2,6 +2,13 @@
   "name": "lambda-badger",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jimskapt/lambda-badger.git"
+  },
+  "contributors": [
+    "Jimskapt <rami.programmer@gmail.com>"
+  ],
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
