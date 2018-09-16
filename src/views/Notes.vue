@@ -11,6 +11,8 @@ div
 	v-layout(wrap)
 		v-flex(v-for="note in notes", :key="note._id", pa-1, d-flex)
 			v-card(hover, :to="{name: 'edit-note', params: {id: note._id}}")
+				v-toolbar(v-if="note.title", color="primary", dense)
+					v-toolbar-title {{ note.title }}
 				v-card-text
 					pre {{ note.content }}
 	v-btn(large, icon, fixed, bottom, right, color="primary", :to="{name: 'edit-note', params: {id: 1}}")

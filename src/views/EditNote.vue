@@ -10,6 +10,7 @@
 					v-icon {{ (exists) ? 'edit' : 'add' }}
 				v-toolbar-title {{ (exists) ? $t('Edit the note') : $t('Create a note') }}
 			v-card-text
+				v-text-field(:label="$t('Title')", v-model="dbDoc.title")
 				v-textarea(:label="$t('Content')", v-model="dbDoc.content")
 				v-layout(column, mt-2)
 					v-flex
