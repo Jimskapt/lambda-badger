@@ -12,6 +12,9 @@
 			v-card-text
 				v-text-field(:label="$t('Title')", v-model="dbDoc.title")
 				v-textarea(:label="$t('Content')", v-model="dbDoc.content")
+				v-tooltip(bottom)
+					v-switch(slot="activator", :label="$t('It is confidential')", v-model="dbDoc.confidential")
+					span {{ $t('The note will not be displayed by default, you will have to ask to show it') }}.
 				v-layout(column, mt-2)
 					v-flex
 						v-btn(large, block, color="primary", @click="saveNote")

@@ -10,18 +10,19 @@ div
 		router-link(style="color:white;", :to="{name: 'edit-note', params: {id: 1}}") {{ $t('Create a note') }}
 	v-layout(wrap)
 		v-flex(v-for="note in notes", :key="note._id", pa-1, d-flex)
-			v-card(hover, :to="{name: 'edit-note', params: {id: note._id}}")
-				v-toolbar(v-if="note.title", color="primary", dense)
-					v-toolbar-title {{ note.title }}
-				v-card-text
-					pre {{ note.content }}
+			note-display(:id="note._id", :title="note.title", :content="note.content", :confidential="note.confidential")
 	v-btn(large, icon, fixed, bottom, right, color="primary", :to="{name: 'edit-note', params: {id: 1}}")
 		v-icon add
 </template>
 
 <script>
+import NoteDisplay from '@/components/note-display.vue';
+
 export default {
 	name: 'notes',
+	components: {
+		'note-display': NoteDisplay,
+	},
 	computed: {
 		notes () {
 			return Object.keys(this.$store.state.notes).map((key) => {

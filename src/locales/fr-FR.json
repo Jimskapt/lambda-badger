@@ -44,5 +44,8 @@
   "Please confirm the deletion of this note": "Veuillez confirmer la suppression de cette note",
   "A note has deleted": "Une note a été supprimée",
   "Website": "Site internet",
-  "Title": "Titre"
+  "Title": "Titre",
+  "confidential": "confidentiel",
+  "It is confidential": "C'est confidentiel",
+  "The note will not be displayed by default, you will have to ask to show it": "La note ne sera pas affichée par défaut, vous devrez demander à l'afficher"
 }

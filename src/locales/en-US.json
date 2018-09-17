@@ -44,5 +44,8 @@
   "Please confirm the deletion of this note": "Please confirm the deletion of this note",
   "A note has deleted": "A note has deleted",
   "Website": "Website",
-  "Title": "Title"
+  "Title": "Title",
+  "confidential": "confidential",
+  "It is confidential": "It is confidential",
+  "The note will not be displayed by default, you will have to ask to show it": "The note will not be displayed by default, you will have to ask to show it"
 }
