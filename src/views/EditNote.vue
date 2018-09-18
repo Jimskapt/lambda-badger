@@ -12,6 +12,14 @@
 			v-card-text
 				v-text-field(:label="$t('Title')", v-model="dbDoc.title")
 				v-textarea(:label="$t('Content')", v-model="dbDoc.content")
+				v-combobox(
+					chips,
+					deletable-chips,
+					multiple,
+					:label="$t('Subjects')",
+					v-model="dbDoc.subjects",
+					item-text="name",
+					item-value="name")
 				v-tooltip(bottom)
 					v-switch(slot="activator", :label="$t('It is confidential')", v-model="dbDoc.confidential")
 					span {{ $t('The note will not be displayed by default, you will have to ask to show it') }}.

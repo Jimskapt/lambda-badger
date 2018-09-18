@@ -10,7 +10,7 @@ div
 		router-link(style="color:white;", :to="{name: 'edit-note', params: {id: 1}}") {{ $t('Create a note') }}
 	v-layout(wrap)
 		v-flex(v-for="note in notes", :key="note._id", pa-1, d-flex)
-			note-display(:id="note._id", :title="note.title", :content="note.content", :confidential="note.confidential")
+			note-display(:id="note._id", :title="note.title", :content="note.content", :confidential="note.confidential", :subjects="note.subjects")
 	v-btn(large, icon, fixed, bottom, right, color="primary", :to="{name: 'edit-note', params: {id: 1}}")
 		v-icon add
 </template>

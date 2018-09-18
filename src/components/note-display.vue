@@ -11,12 +11,16 @@ v-card
     v-card-text
         pre(v-if="confidential !== true || show_content") {{ content }}
         i(v-else) [{{ $t('confidential') }}]
+        div(v-if="subjects !== undefined", class="text-xs-right")
+            v-divider(style="margin: 0.5em 0px;")
+            template(v-for="subject in subjects")
+                v-chip(small, outline) {{ subject }}
 </template>
 
 <script>
 export default {
     name: 'note-display',
-    props: ['id', 'title', 'content', 'confidential'],
+    props: ['id', 'title', 'content', 'confidential', 'subjects'],
     data() {
         return {
             show_content: false,
