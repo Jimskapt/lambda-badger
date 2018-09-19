@@ -25,6 +25,7 @@ const store = new Vuex.Store({
   state: {
     settings: DEFAULT_SETTINGS,
     notes: {},
+    subjects: {},
   },
   mutations: {
     setNote(state, payload) {
@@ -42,6 +43,18 @@ const store = new Vuex.Store({
       if(payload.no_toast !== true) {
         Vue.toasted.show(i18n.t('A note has been updated (or added)'), { duration: 2000, type: 'info', icon: 'edit' });
       }
+    },
+    setSubject(state, payload) {
+      if(typeof(payload.data) === 'undefined') {
+        console.error('$store.mutations.setSubject : missing "data" object on payload');
+        return;
+      }
+      if(typeof(payload.data.key) === 'undefined') {
+        console.error('$store.mutations.setSubject : missing "key" value on payload.data');
+        return;
+      }
+
+      Vue.set(state.subjects, payload.data.key, payload.data.value);
     },
     deleteNote(state, payload) {
       if(typeof(payload.data) === 'undefined') {
@@ -189,6 +202,29 @@ const store = new Vuex.Store({
           .then((res) => {
             res.rows.forEach((row) => {
               context.commit('setNote', {data: row.doc, no_toast: true});
+            });
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+    fetchAllSubjects(context) {
+      return new Promise((resolve, reject) => {
+        db.query('subjects_weights/subjects_weights', {group: true, reduce: true})
+          .then((res) => {
+            res.rows.sort((a, b) => {
+              if(a.value < b.value) {
+                return +1;
+              } else if(a.value > b.value) {
+                return -1;
+              } else {
+                return 0;
+              }
+            });
+
+            res.rows.forEach((row) => {
+              context.commit('setSubject', {data: row});
             });
           })
           .catch((err) => {
@@ -362,7 +398,7 @@ db.get('_design/all_notes')
         });
     }
   })
-  .catch((err) => { 
+  .catch((err) => {
     if(err.status === 404) {
       db.post(allNotes)
         .then(() => {
@@ -379,6 +415,50 @@ db.get('_design/all_notes')
     store.dispatch('fetchAllNotes')
       .catch((err) => {
         console.error('CPE0005: ', err);
+      });
+  });
+
+const subjectsWeights = {
+  _id: '_design/subjects_weights',
+  views: {
+    subjects_weights: {
+      map: 'function (doc) { if (doc.data_type == "note" && doc.subjects != undefined) { for(let i=0; i<doc.subjects.length; i++) { emit(doc.subjects[i], 1); } } }',
+      reduce: '_count',
+    },
+  },
+};
+
+db.get('_design/subjects_weights')
+  .then((doc) => {
+    Vue.set(subjectsWeights, '_rev', doc._rev);
+
+    if(doc.views.subjects_weights.map !== subjectsWeights.views.subjects_weights.map || doc.views.subjects_weights.reduce !== subjectsWeights.views.subjects_weights.reduce) {
+      db.put(subjectsWeights)
+        .then(() => {
+          console.log('_design/subjects_weights updated');
+        })
+        .catch((err) => {
+          console.error('CPE0012: ', err);
+        });
+    }
+  })
+  .catch((err) => {
+    if(err.status === 404) {
+      db.post(subjectsWeights)
+        .then(() => {
+          console.log('_design/subjects_weights created');
+        })
+        .catch((err2) => {
+          console.error('CPE0013: ', err2);
+        });
+    } else {
+      console.error('CPE0014: ', err);
+    }
+   })
+  .finally(() => {
+    store.dispatch('fetchAllSubjects')
+      .catch((err) => {
+        console.error('CPE0015: ', err);
       });
   });
 
@@ -420,6 +500,8 @@ db.changes({
     } else if(change.deleted === true && typeof(store.state.notes[change.doc._id]) !== 'undefined') {
       console.log('DB:delete:', change.doc);
       store.commit('deleteNote', { data: change.doc });
+    } else {
+      console.log('DB:ignored:', change);
     }
   })
   .on('error', (err) => {

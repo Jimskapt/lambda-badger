@@ -47,5 +47,6 @@
   "Title": "Titre",
   "confidential": "confidentiel",
   "It is confidential": "C'est confidentiel",
-  "The note will not be displayed by default, you will have to ask to show it": "La note ne sera pas affichée par défaut, vous devrez demander à l'afficher"
+  "The note will not be displayed by default, you will have to ask to show it": "La note ne sera pas affichée par défaut, vous devrez demander à l'afficher",
+  "Subjects": "Sujets"
 }
