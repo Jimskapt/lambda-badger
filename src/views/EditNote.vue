@@ -15,6 +15,7 @@
 				v-combobox(
 					chips,
 					deletable-chips,
+					small-chips,
 					multiple,
 					:label="$t('Subjects')",
 					v-model="dbDoc.subjects",
