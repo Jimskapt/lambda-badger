@@ -14,6 +14,7 @@ div
 		:label="$t('Filter')",
 		class="mb-2 mx-1",
 		prepend-inner-icon="filter_list",
+		v-if="notes !== undefined && notes.length > 0",
 		flat, multiple, dense, chips, deletable-chips, small-chips, clearable, solo, hide-no-data, hide-details)
 	v-layout(wrap)
 		v-flex(v-for="note in filtered_notes", :key="note._id", pa-1, d-flex)
