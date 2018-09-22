@@ -49,5 +49,9 @@
   "It is confidential": "It is confidential",
   "The note will not be displayed by default, you will have to ask to show it": "The note will not be displayed by default, you will have to ask to show it",
   "Subjects": "Subjects",
-  "Filter": "Filter"
+  "Filter": "Filter",
+  "Your data": "Your data",
+  "Make it human readable": "Make it human readable",
+  "Include confidential notes": "Include confidential notes",
+  "In order to save your data, just copy and paste the following data in an text editor (like notepad), and then save it as *.json file.": "In order to save your data, just copy and paste the following data in an text editor (like notepad), and then save it as *.json file."
 }

@@ -49,5 +49,9 @@
   "It is confidential": "C'est confidentiel",
   "The note will not be displayed by default, you will have to ask to show it": "La note ne sera pas affichée par défaut, vous devrez demander à l'afficher",
   "Subjects": "Sujets",
-  "Filter": "Filtrer"
+  "Filter": "Filtrer",
+  "Your data": "Vos données",
+  "Make it human readable": "Rendre les données lisibles par un humain",
+  "Include confidential notes": "Intégrer les notes confidentielles",
+  "In order to save your data, just copy and paste the following data in an text editor (like notepad), and then save it as *.json file.": "Pour sauvegarder vos données, copiez et collez simplement les données dans un éditeur de texte (comme le bloc-notes) et enregistrez le ensuite comme un fichier *.json."
 }

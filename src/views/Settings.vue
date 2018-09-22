@@ -34,6 +34,9 @@ v-card
 			v-btn(block, color="warning", @click="forceRefresh")
 				v-icon refresh
 				span {{ $t('Debug : refresh page') }}
+			v-btn(block, :to="{name: 'export-data'}")
+				v-icon save
+				span {{ $t('Export your data') }}
 		v-card-actions
 			v-btn(block, color="error", @click="$router.go(-1)")
 				v-icon clear

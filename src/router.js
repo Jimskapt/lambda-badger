@@ -4,6 +4,7 @@ import Router from 'vue-router';
 import Notes from './views/Notes.vue';
 import Settings from './views/Settings.vue';
 import EditNote from './views/EditNote.vue';
+import ExportData from './views/ExportData.vue';
 import Help from './views/Help.vue';
 
 Vue.use(Router);
@@ -37,6 +38,11 @@ export default new Router({
       path: '/help',
       name: 'help',
       component: Help,
+    },
+    {
+      path: '/export',
+      name: 'export-data',
+      component: ExportData,
     },
   ],
 });
