@@ -1,28 +1,28 @@
 <template lang="pug">
-	div
-		v-container
-			v-btn(color="secondary", @click="$router.back()")
-				v-icon chevron_left
-				span {{ $t('Go back') }}
-		v-card
-			v-toolbar(color="primary")
-				v-toolbar-side-icon
-					v-icon save
-				v-toolbar-title {{ $t('Export your data') }}
-			v-card-text
-				v-autocomplete(
-					v-model="subjectsFilters",
-					:items="Object.keys($store.state.subjects)",
-					:label="$t('Filter')",
-					class="mb-2 mx-1",
-					prepend-inner-icon="filter_list",
-					v-if="notes !== undefined && notes.length > 0",
-					flat, multiple, dense, chips, deletable-chips, small-chips, clearable, hide-no-data, hide-details)
-				v-switch(:label="$t('Make it human readable')", v-model="readable")
-				v-switch(:label="$t('Include confidential notes')", v-model="confidentials")
-				v-alert(type="info", :value="true") {{ $t('In order to save your data, just copy and paste the following data in an text editor (like notepad), and then save it as *.json file.') }}
-				v-divider(class="my-3")
-				v-textarea(:label="$t('Your data')", readonly, hide-details, v-model="dbData")
+div
+	v-container
+		v-btn(color="secondary", @click="$router.back()")
+			v-icon chevron_left
+			span {{ $t('Go back') }}
+	v-card
+		v-toolbar(color="primary")
+			v-toolbar-side-icon
+				v-icon archive
+			v-toolbar-title {{ $t('Export your data') }}
+		v-card-text
+			v-autocomplete(
+				v-model="subjectsFilters",
+				:items="Object.keys($store.state.subjects)",
+				:label="$t('Filter')",
+				class="mb-2 mx-1",
+				prepend-inner-icon="filter_list",
+				v-if="notes !== undefined && notes.length > 0",
+				flat, multiple, dense, chips, deletable-chips, small-chips, clearable, hide-no-data, hide-details)
+			v-switch(:label="$t('Make it human readable')", v-model="readable")
+			v-switch(:label="$t('Include confidential notes')", v-model="confidentials")
+			v-alert(type="info", :value="true") {{ $t('In order to save your data, just copy and paste the following data in an text editor (like notepad), and then save it as *.json file.') }}
+			v-divider(class="my-3")
+			v-textarea(:label="$t('Your data')", readonly, hide-details, v-model="dbData")
 </template>
 
 <script>
@@ -71,7 +71,16 @@ export default {
 			});
 		},
 		dbData() {
-			return JSON.stringify(this.filtered_notes, null, (this.readable) ? '\t': '');
+			return JSON.stringify(
+				{
+					notes: {
+						filters: this.subjectsFilters,
+						add_confidential: this.confidentials,
+						items: this.filtered_notes,
+					},
+					app_version: require('../../package.json').version,
+					date: new Date(),
+				}, null, (this.readable) ? '\t': '');
 		},
 	},
 };
