@@ -9,7 +9,7 @@ v-card
             v-btn(small, icon, :to="{name: 'edit-note', params: {id: id}}")
                 v-icon edit
     v-card-text
-        pre(v-if="confidential !== true || show_content") {{ content }}
+        pre(v-if="confidential !== true || show_content", style="overflow:auto;") {{ content }}
         i(v-else) [{{ $t('confidential') }}]
         div(v-if="subjects !== undefined", class="text-xs-right")
             v-divider(style="margin: 0.5em 0px;")

@@ -15,6 +15,7 @@ div
 		class="mb-2 mx-1",
 		prepend-inner-icon="filter_list",
 		v-if="notes !== undefined && notes.length > 0",
+		@blur="saveFilter",
 		flat, multiple, dense, chips, deletable-chips, small-chips, clearable, solo, hide-no-data, hide-details)
 	v-layout(wrap)
 		v-flex(v-for="note in filtered_notes", :key="note._id", pa-1, d-flex)
@@ -35,6 +36,11 @@ export default {
 	},
 	components: {
 		'note-display': NoteDisplay,
+	},
+	watch: {
+		'$store.state.settings.notes_filter': function(value) {
+			this.subjectsFilters = value;
+		},
 	},
 	computed: {
 		filtered_notes () {
@@ -58,6 +64,14 @@ export default {
 				return this.$store.state.notes[key];
 			});
 		},
+	},
+	methods: {
+		saveFilter() {
+			this.$store.dispatch('setNotesFilter', {value: this.subjectsFilters});
+		},
+	},
+	mounted() {
+		this.subjectsFilters = this.$store.state.settings.notes_filter;
 	},
 };
 </script>

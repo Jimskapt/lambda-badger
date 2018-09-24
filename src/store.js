@@ -16,6 +16,7 @@ const DEFAULT_SETTINGS = {
   darkMode: false,
   allowAutomaticUpdate: false,
   currentSync: null,
+  notes_filter: [],
 };
 
 let dbSync = null;
@@ -189,9 +190,21 @@ const store = new Vuex.Store({
           state.settings = DEFAULT_SETTINGS;
         }
 
-        state.settings.currentSync = payload.value;
+        Vue.set(state.settings, 'currentSync', payload.value);
       } else {
         console.error('$store.mutations.setAllowAutomaticUpdate : payload or payload.value is undefined');
+      }
+    },
+    setNotesFilter(state, payload) {
+      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
+        if(typeof(state.settings) === 'undefined') {
+          state.settings = DEFAULT_SETTINGS;
+        }
+
+        Vue.set(state.settings, 'notes_filter', payload.value);
+
+      } else {
+        console.error('$store.mutations.setNotesFilter : payload or payload.value is undefined');
       }
     },
   },
@@ -372,6 +385,34 @@ const store = new Vuex.Store({
         }
       });
     },
+    setNotesFilter(context, payload) {
+      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
+        context.commit('setNotesFilter', payload);
+
+        const that = this;
+        dbSettings.get('notes_filter')
+          .then((doc) => {
+            doc.value = payload.value;
+
+            console.log('dfdtbgdgsw', doc);
+
+            dbSettings.put(doc);
+          })
+          .catch((err) => {
+            if(err.name === 'not_found') {
+              dbSettings.post({
+                _id: 'notes_filter',
+                value: payload.value,
+              });
+            } else {
+              that.$toasted.show(err, { duration: 4000, type: 'error', icon: 'warning' });
+            }
+          });
+
+      } else {
+        console.error('$store.actions.setNotesFilter : payload or payload.value is undefined');
+      }
+    },
   },
 });
 
@@ -479,6 +520,12 @@ dbSettings.get('couch_url')
     store.commit('setCouchURL', {value: doc.value});
   })
   .catch(() => {}); // error are not important
+
+dbSettings.get('notes_filter')
+.then((doc) => {
+  store.commit('setNotesFilter', {value: doc.value});
+})
+.catch(() => {}); // error are not important
 
 dbSettings.get('allow_automatic_update')
   .then((doc) => {
