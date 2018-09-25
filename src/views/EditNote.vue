@@ -45,12 +45,28 @@ export default {
 				content: '',
 				data_type: 'note',
 			},
+			changed: false,
 		};
 	},
 	computed: {
 		exists() {
 			return typeof(this.dbDoc._rev) !== 'undefined';
 		},
+	},
+	watch: {
+		'dbDoc.content': function() {
+			this.changed = true;
+		},
+		changed(value) {
+			if(value === true) {
+				const that = this;
+				window.onbeforeunload = function() {
+					return that.$t('The note is not saved, you will lost the changes if your are leaving the page. Please confirm the exit.');
+				};
+			} else {
+				window.onbeforeunload = false;
+			}
+		}
 	},
 	methods: {
 		id_changed(value) {
@@ -72,6 +88,9 @@ export default {
 						content: '',
 						data_type: 'note',
 					});
+				})
+				.finally(() => {
+					that.changed = false;
 				});
 		},
 		saveNote() {
@@ -87,6 +106,8 @@ export default {
 					} else {
 						that.$toasted.show('Error while saving note', { duration: 4000, type: 'error', icon: 'warning' });
 					}
+
+					that.changed = false;
 				})
 				.catch((err) => {
 					that.$toasted.show(err, { duration: 4000, type: 'error', icon: 'warning' });
@@ -135,5 +156,19 @@ export default {
 			function(value) { that.id_changed(value) },
 		);
 	},
+	beforeDestroy() {
+		window.onbeforeunload = null;
+	},
+	beforeRouteLeave(to, from, next) {
+		if(this.changed) {
+			if(confirm(this.$t('The note is not saved, you will lost the changes if your are leaving the page. Please confirm the exit.'))) {
+				next();
+			} else {
+				next(false);
+			}
+		} else {
+			next();
+		}
+	}
 };
 </script>
