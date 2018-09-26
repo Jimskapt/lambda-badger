@@ -392,11 +392,8 @@ const store = new Vuex.Store({
         const that = this;
         dbSettings.get('notes_filter')
           .then((doc) => {
-            doc.value = payload.value;
-
-            console.log('dfdtbgdgsw', doc);
-
-            dbSettings.put(doc);
+              doc.value = payload.value;
+              dbSettings.put(doc);
           })
           .catch((err) => {
             if(err.name === 'not_found') {

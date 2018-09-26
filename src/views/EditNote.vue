@@ -11,7 +11,7 @@
 				v-toolbar-title {{ (exists) ? $t('Edit the note') : $t('Create a note') }}
 			v-card-text
 				v-text-field(:label="$t('Title')", v-model="dbDoc.title")
-				v-textarea(:label="$t('Content')", v-model="dbDoc.content")
+				v-textarea(:label="$t('Content')", v-model="dbDoc.content", auto-grow, autofocus)
 				v-combobox(
 					chips,
 					deletable-chips,
@@ -108,6 +108,11 @@ export default {
 					}
 
 					that.changed = false;
+
+					this.$store.dispatch('fetchAllSubjects')
+						.catch((err) => {
+							console.error('CPE0017: ', err);
+						});
 				})
 				.catch((err) => {
 					that.$toasted.show(err, { duration: 4000, type: 'error', icon: 'warning' });
