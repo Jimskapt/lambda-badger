@@ -4,6 +4,16 @@ div
 		v-toolbar-side-icon(:to="{name: 'edit-note', params: {id: 1}}")
 			v-icon event_note
 		v-toolbar-title {{ $t('Notes') }}
+		v-spacer
+		v-toolbar-actions
+			v-tooltip(bottom)
+				v-btn(icon, :to="{name:'export-data'}", slot="activator")
+					v-icon archive
+				span {{ $t('Import your data manually') }}
+			v-tooltip(bottom)
+				v-btn(icon, :to="{name:'import-data'}", slot="activator")
+					v-icon unarchive
+				span {{ $t('Export your data manually') }}
 	v-alert(type="info", :value="notes.length <= 0")
 		span {{ $t('There is no notes') }}.
 		br

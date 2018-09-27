@@ -18,6 +18,12 @@ v-card
 				return-object
 			)
 			v-switch(:label="$t('Use dark colors ?')", v-model="dark")
+			v-btn(block, color="warning", @click="forceRefresh")
+				v-icon refresh
+				span {{ $t('Debug : refresh page') }}
+			
+			v-divider(class="mt-3")
+
 			v-text-field(
 				v-model="couchUrl",
 				:label="$t('The url of your CouchDB-like database') + ' (' + $t('optional') + ')'",
@@ -31,22 +37,21 @@ v-card
 					v-btn(block, v-if="couchUrl.trim() !== '' && !allowAutomaticUpdate", @click="doSync")
 						v-icon sync
 						span {{ $t('Manual update') }}
-			v-btn(block, color="warning", @click="forceRefresh")
-				v-icon refresh
-				span {{ $t('Debug : refresh page') }}
 			v-btn(block, :to="{name: 'export-data'}")
 				v-icon archive
-				span {{ $t('Export your data') }}
+				span {{ $t('Export your data manually') }}
 			v-btn(block, :to="{name: 'import-data'}")
 				v-icon unarchive
-				span {{ $t('Import your data') }}
+				span {{ $t('Import your data manually') }}
+			
+			v-divider(class="mt-3")
 		v-card-actions
 			v-btn(block, color="error", @click="$router.go(-1)")
 				v-icon clear
 				span {{ $t('Abort') }}
 			v-btn(block, color="success", @click="save")
-				v-icon done
-				span {{ $t('OK') }}
+				v-icon save
+				span {{ $t('Save') }}
 </template>
 
 <script>

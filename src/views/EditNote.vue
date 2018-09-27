@@ -17,6 +17,7 @@
 					deletable-chips,
 					small-chips,
 					multiple,
+					:items="Object.keys($store.state.subjects)"
 					:label="$t('Subjects')",
 					v-model="dbDoc.subjects",
 					item-text="name",
@@ -54,8 +55,11 @@ export default {
 		},
 	},
 	watch: {
-		'dbDoc.content': function() {
-			this.changed = true;
+		dbDoc: {
+			handler: function() {
+				this.changed = true;
+			},
+			deep: true,
 		},
 		changed(value) {
 			if(value === true) {

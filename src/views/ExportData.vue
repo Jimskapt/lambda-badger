@@ -22,7 +22,7 @@ div
 			v-switch(:label="$t('Include confidential notes')", v-model="confidentials")
 			v-alert(type="info", :value="true") {{ $t('In order to save your data, just copy and paste the following data in an text editor (like notepad), and then save it as *.json file.') }}
 			v-divider(class="my-3")
-			v-textarea(:label="$t('Your data')", readonly, hide-details, v-model="dbData")
+			v-textarea(:label="$t('Your data')", readonly, hide-details, auto-grow, v-model="dbData")
 </template>
 
 <script>

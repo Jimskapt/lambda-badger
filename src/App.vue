@@ -22,11 +22,13 @@ v-app(:dark="darkMode")
         v-list-tile-content
           v-list-tile-title {{ $t('Help') }}
       v-divider
-      v-list-tile(href="https://github.com/Jimskapt/lambda-badger", target="_blank")
+      v-list-tile(:href="appWebsite", target="_blank", v-if="appWebsite !== '<package.json:website>'")
         v-list-tile-action
           v-icon bookmarks
         v-list-tile-content
           v-list-tile-title {{ $t('Website') }}
+      v-list-tile(v-else)
+        v-list-tile-content package.json:website
   v-toolbar(app)
     v-toolbar-side-icon(@click.stop="drawer = !drawer")
     v-toolbar-title {{ appName }}
@@ -47,8 +49,9 @@ export default {
     return {
       drawer: false,
       darkMode: false,
-      appVersion: pkgInfo.version,
-      appName: pkgInfo.displayName,
+      appVersion: pkgInfo.version || '<package.json:version>',
+      appName: pkgInfo.displayName || '<package.json:displayName>',
+      appWebsite: pkgInfo.website || '<package.json:website>',
     };
   },
   created() {
