@@ -8,11 +8,11 @@ div
 		v-toolbar(color="primary")
 			v-toolbar-side-icon
 				v-icon archive
-			v-toolbar-title {{ $t('Export your data') }}
+			v-toolbar-title {{ $t('Export your data manually') }}
 		v-card-text
 			v-autocomplete(
 				v-model="subjectsFilters",
-				:items="Object.keys($store.state.subjects)",
+				:items="filters",
 				:label="$t('Filter')",
 				class="mb-2 mx-1",
 				prepend-inner-icon="filter_list",
@@ -51,17 +51,23 @@ export default {
 				}
 
 				const subjectFilter = function() {
-					let result = false;
+					let result = !(that.subjectsFilters.length > 0);
 
-					if(that.subjectsFilters.length > 0 && typeof(note.subjects) !== 'undefined') {
-						for (let i = 0; i < note.subjects.length; i++) {
-							if(that.subjectsFilters.includes(note.subjects[i])) {
-								result = true;
-								break;
+					if(typeof(note.subjects) !== 'undefined') {
+						if(that.subjectsFilters.includes('*' + that.$t('no subject') + '*') && note.subjects.length === 0) {
+							result = true;
+						} else {
+							for (let i = 0; i < note.subjects.length; i++) {
+								if(that.subjectsFilters.includes(note.subjects[i])) {
+									result = true;
+									break;
+								}
 							}
 						}
 					} else {
-						result = true;
+						if(that.subjectsFilters.includes('*' + that.$t('no subject') + '*')) {
+							result = true;
+						}
 					}
 
 					return result;
@@ -74,7 +80,7 @@ export default {
 			return JSON.stringify(
 				{
 					notes: {
-						filters: this.subjectsFilters,
+						filters: this.subjectsFilters.map((filter) => { return (filter === '*' + this.$t('no subject') + '*') ? '*no subject*' : filter; }),
 						add_confidential: this.confidentials,
 						items: this.filtered_notes,
 					},
@@ -82,6 +88,13 @@ export default {
 					date: new Date(),
 				}, null, (this.readable) ? '\t': '');
 		},
+		filters() {
+			let result = ['*' + this.$t('no subject') + '*'];
+
+			result = result.concat(Object.keys(this.$store.state.subjects));
+
+			return result;
+		}
 	},
 };
 </script>

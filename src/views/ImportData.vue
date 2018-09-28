@@ -8,7 +8,7 @@ div
 		v-toolbar(color="primary")
 			v-toolbar-side-icon
 				v-icon unarchive
-			v-toolbar-title {{ $t('Import your data') }}
+			v-toolbar-title {{ $t('Import your data manually') }}
 		v-card-text
 			v-alert(type="info", :value="true") {{ $t('Please paste your data in the following field and click on the button in the the bottom of the page, in order to load them in this app.') }}
 			v-divider(class="my-3")

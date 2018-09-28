@@ -56,8 +56,12 @@ export default {
 	},
 	watch: {
 		dbDoc: {
-			handler: function() {
-				this.changed = true;
+			handler: function(value, oldValue) {
+				if(oldValue._id === value._id && oldValue._rev === value._rev) {
+					this.changed = true;
+				} else {
+					this.changed = false;
+				}
 			},
 			deep: true,
 		},

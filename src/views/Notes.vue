@@ -5,22 +5,21 @@ div
 			v-icon event_note
 		v-toolbar-title {{ $t('Notes') }}
 		v-spacer
-		v-toolbar-actions
-			v-tooltip(bottom)
-				v-btn(icon, :to="{name:'export-data'}", slot="activator")
-					v-icon archive
-				span {{ $t('Import your data manually') }}
-			v-tooltip(bottom)
-				v-btn(icon, :to="{name:'import-data'}", slot="activator")
-					v-icon unarchive
-				span {{ $t('Export your data manually') }}
+		v-tooltip(bottom)
+			v-btn(icon, :to="{name:'export-data'}", slot="activator")
+				v-icon archive
+			span {{ $t('Import your data manually') }}
+		v-tooltip(bottom)
+			v-btn(icon, :to="{name:'import-data'}", slot="activator")
+				v-icon unarchive
+			span {{ $t('Export your data manually') }}
 	v-alert(type="info", :value="notes.length <= 0")
 		span {{ $t('There is no notes') }}.
 		br
 		router-link(style="color:white;", :to="{name: 'edit-note', params: {id: 1}}") {{ $t('Create a note') }}
 	v-autocomplete(
 		v-model="subjectsFilters",
-		:items="Object.keys($store.state.subjects)",
+		:items="availableSubjects",
 		:label="$t('Filter')",
 		class="mb-2 mx-1",
 		prepend-inner-icon="filter_list",
@@ -53,27 +52,42 @@ export default {
 		},
 	},
 	computed: {
-		filtered_notes () {
+		filtered_notes() {
 			return this.notes.filter((note) => {
 				let result = !(this.subjectsFilters.length > 0);
 
 				if(typeof(note.subjects) !== 'undefined') {
-					for (let i = 0; i < note.subjects.length; i++) {
-						if(this.subjectsFilters.includes(note.subjects[i])) {
-							result = true;
-							break;
+					if(this.subjectsFilters.includes('*' + this.$t('no subject') + '*') && note.subjects.length === 0) {
+						result = true;
+					} else {
+						for (let i = 0; i < note.subjects.length; i++) {
+							if(this.subjectsFilters.includes(note.subjects[i])) {
+								result = true;
+								break;
+							}
 						}
+					}
+				} else {
+					if(this.subjectsFilters.includes('*' + this.$t('no subject') + '*')) {
+						result = true;
 					}
 				}
 
 				return result;
 			});
 		},
-		notes () {
+		notes() {
 			return Object.keys(this.$store.state.notes).map((key) => {
 				return this.$store.state.notes[key];
 			});
 		},
+		availableSubjects() {
+			let result = ['*' + this.$t('no subject') + '*'];
+
+			result = result.concat(Object.keys(this.$store.state.subjects));
+
+			return result;
+		}
 	},
 	methods: {
 		saveFilter() {

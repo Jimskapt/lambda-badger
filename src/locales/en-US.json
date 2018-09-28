@@ -55,5 +55,6 @@
   "Include confidential notes": "Include confidential notes",
   "In order to save your data, just copy and paste the following data in an text editor (like notepad), and then save it as *.json file.": "In order to save your data, just copy and paste the following data in an text editor (like notepad), and then save it as *.json file.",
   "Please paste your data in the following field and click on the button in the the bottom of the page, in order to load them in this app.": "Please paste your data in the following field and click on the button in the the bottom of the page, in order to load them in this app.",
-  "The note is not saved, you will lost the changes if your are leaving the page. Please confirm the exit.": "The note is not saved, you will lost the changes if your are leaving the page. Please confirm the exit."
+  "The note is not saved, you will lost the changes if your are leaving the page. Please confirm the exit.": "The note is not saved, you will lost the changes if your are leaving the page. Please confirm the exit.",
+  "no subject": "no subject"
 }
