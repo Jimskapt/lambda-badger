@@ -11,6 +11,12 @@
 				v-toolbar-title {{ (exists) ? $t('Edit the note') : $t('Create a note') }}
 			v-card-text
 				v-text-field(:label="$t('Title')", v-model="dbDoc.title")
+				rich-editor(v-model="dbDoc.content")
+				br
+				br
+				hr
+				br
+				br
 				v-textarea(:label="$t('Content')", v-model="dbDoc.content", auto-grow, autofocus)
 				v-combobox(
 					chips,
@@ -37,9 +43,14 @@
 </template>
 
 <script>
+import RichEditor from '@/components/rich-editor.vue';
+
 export default {
 	name: 'edit-note',
 	props: ['id'],
+	components: {
+		'rich-editor': RichEditor,
+	},
 	data() {
 		return {
 			dbDoc: {
