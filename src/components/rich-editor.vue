@@ -12,14 +12,14 @@ div
         v-tabs(model="tabs", centered, grow, color="primary")
             v-tab
                 v-icon edit
-                span {{ $t('Rich text') }}
+                span &nbsp;{{ $t('Rich text') }}
             v-tab-item
                 pre(ref="render", contenteditable="true", v-html="htmlContent")
             v-tab
                 v-icon code
-                span {{ $t('Markdown code') }}
+                span &nbsp;{{ $t('Markdown code') }}
             v-tab-item
-                v-textarea(:label="label", v-model="markdownContent", auto-grow, @input="change")
+                v-textarea(:label="label", v-model="markdownContent", @input="change")
 </template>
 
 <script>
@@ -72,7 +72,8 @@ function parser(input) {
         });
 
         if(typeof(firstRule.position) !== 'undefined' && typeof(firstRule.rule) !== 'undefined' && typeof(firstRule.test) !== 'undefined') {
-            result += input.substring(0, firstRule.position);
+            const before = input.substring(0, firstRule.position);
+            result += '<span md-content="' + before + '">' + before + '</span>';
 
             if(typeof(firstRule.rule.formatter) === 'function') {
                 result += firstRule.rule.formatter(firstRule.test[firstRule.rule.inner_index]);
@@ -81,11 +82,12 @@ function parser(input) {
                 if(typeof(firstRule.rule.tag_arguments) !== 'undefined') {
                     result += ' ' + firstRule.rule.tag_arguments;
                 }
+                result += ' md-content="' + firstRule.test[firstRule.rule.outter_index] + '"'
                 result += '>' + parser(firstRule.test[firstRule.rule.inner_index]) + '</' + firstRule.rule.tag + '>';
             }
             result += parser(input.substring(firstRule.position + firstRule.test[firstRule.rule.outter_index].length));
         } else {
-            result += input;
+            result += '<span md-content="' + input + '">' + input + '</span>';
         }
     }
 
@@ -119,8 +121,6 @@ export default {
         addTag(openTag, closeTag) {
             const selection = window.getSelection();
 
-            console.log(selection);
-
             let newContent = '';
             if(selection.anchorOffset === 0 && selection.focusOffset === 0) {
                 newContent += this.markdownContent + ' ';
@@ -128,11 +128,22 @@ export default {
                 newContent += 'text';
                 newContent += closeTag;
             } else {
-                newContent += this.markdownContent.substring(0, selection.anchorOffset);
-                newContent += openTag;
-                newContent += this.markdownContent.substring(selection.anchorOffset, selection.focusOffset);
-                newContent += closeTag;
-                newContent += this.markdownContent.substring(selection.focusOffset);
+                for (let i_childNodes = 0; i_childNodes < this.$refs.render.childNodes.length; i_childNodes++) {
+                    const child = this.$refs.render.childNodes[i_childNodes];
+
+                    for (let i_attr = 0; i_attr < child.attributes.length; i_attr++) {
+                        const attr = child.attributes[i_attr];
+                        if(selection.anchorNode.parentNode == child) {
+                            newContent += attr.value.substring(0, selection.anchorOffset);
+                            newContent += openTag;
+                            newContent += attr.value.substring(selection.anchorOffset, selection.focusOffset);
+                            newContent += closeTag;
+                            newContent += attr.value.substring(selection.focusOffset);
+                        } else {
+                            newContent += attr.value;
+                        }
+                    }
+                }
             }
 
             this.markdownContent = newContent;
