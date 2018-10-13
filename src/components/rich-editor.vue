@@ -32,21 +32,21 @@ function parser(input) {
         const markdownRules = [
             {
                 tag: 'strong',
-                regex: /\*\*([^(**)]+)\*\*/gm,
+                regex: /\*\*(.+)\*\*/gms,
                 outter_index: 0,
                 inner_index: 1,
                 shift_left: [],
             },
             {
                 tag: 'em',
-                regex: /(^|[^*])(\*([^*]+)\*)([^*]|$)/gm,
+                regex: /(^|[^*])(\*(.+)\*)([^*]|$)/gms,
                 outter_index: 2,
                 inner_index: 3,
                 shift_left: [1],
             },
             {
                 tag: 'h1',
-                regex: /^# ([^\n]+)\n/gm,
+                regex: /^# (.+)\n/gm,
                 outter_index: 0,
                 inner_index: 1,
                 shift_left: [],
@@ -73,7 +73,8 @@ function parser(input) {
 
         if(typeof(firstRule.position) !== 'undefined' && typeof(firstRule.rule) !== 'undefined' && typeof(firstRule.test) !== 'undefined') {
             const before = input.substring(0, firstRule.position);
-            result += '<span md-content="' + before + '">' + before + '</span>';
+            // result += '<span md-outter="' + before + '">' + before + '</span>';
+            result += before;
 
             if(typeof(firstRule.rule.formatter) === 'function') {
                 result += firstRule.rule.formatter(firstRule.test[firstRule.rule.inner_index]);
@@ -82,12 +83,13 @@ function parser(input) {
                 if(typeof(firstRule.rule.tag_arguments) !== 'undefined') {
                     result += ' ' + firstRule.rule.tag_arguments;
                 }
-                result += ' md-content="' + firstRule.test[firstRule.rule.outter_index] + '"'
+                result += ' md-outter="' + firstRule.test[firstRule.rule.outter_index] + '"'
                 result += '>' + parser(firstRule.test[firstRule.rule.inner_index]) + '</' + firstRule.rule.tag + '>';
             }
             result += parser(input.substring(firstRule.position + firstRule.test[firstRule.rule.outter_index].length));
         } else {
-            result += '<span md-content="' + input + '">' + input + '</span>';
+            // result += '<span md-outter="' + input + '">' + input + '</span>';
+            result += input;
         }
     }
 
@@ -121,8 +123,30 @@ export default {
         addTag(openTag, closeTag) {
             const selection = window.getSelection();
 
+            let startSelection = selection.anchorOffset;
+            let startNode = selection.anchorNode;
+
+            let endSelection = selection.focusOffset;
+            let endNode = selection.focusNode;
+
+            if(startSelection > endSelection && startNode == endNode) {
+                const temp = startSelection;
+                const tempNode = startNode;
+
+                startSelection = endSelection;
+                startNode = endNode;
+
+                endSelection = temp;
+                endNode = tempNode;
+            }
+
+/*
+            console.log(startSelection,':',startNode);
+            console.log(endSelection,':',endNode);
+*/
+
             let newContent = '';
-            if(selection.anchorOffset === 0 && selection.focusOffset === 0) {
+            if(startSelection === 0 && endSelection === 0) {
                 newContent += this.markdownContent + ' ';
                 newContent += openTag;
                 newContent += 'text';
@@ -131,16 +155,51 @@ export default {
                 for (let i_childNodes = 0; i_childNodes < this.$refs.render.childNodes.length; i_childNodes++) {
                     const child = this.$refs.render.childNodes[i_childNodes];
 
-                    for (let i_attr = 0; i_attr < child.attributes.length; i_attr++) {
-                        const attr = child.attributes[i_attr];
-                        if(selection.anchorNode.parentNode == child) {
-                            newContent += attr.value.substring(0, selection.anchorOffset);
+                    let mdValue = '';
+
+                    if(typeof(child.attributes) !== 'undefined') {
+                        for (let i_attr = 0; i_attr < child.attributes.length; i_attr++) {
+                            const attr = child.attributes[i_attr];
+                            if(attr.name === 'md-outter') {
+                                mdValue = attr.value;
+                                break;
+                            }
+                        }
+                    } else {
+                        mdValue = child.wholeText;
+                    }
+
+                    if(startNode == endNode) {
+                        if(startNode.parentNode == child || startNode == child) {
+                            newContent += mdValue.substring(0, startSelection);
                             newContent += openTag;
-                            newContent += attr.value.substring(selection.anchorOffset, selection.focusOffset);
+                            newContent += mdValue.substring(startSelection, endSelection);
                             newContent += closeTag;
-                            newContent += attr.value.substring(selection.focusOffset);
+                            newContent += mdValue.substring(endSelection);
                         } else {
-                            newContent += attr.value;
+                            newContent += mdValue;
+                        }
+                    } else {
+                        let isTag = false;
+
+                        if(startNode.parentNode == child || startNode == child) {
+                            newContent += mdValue.substring(0, startSelection);
+                            newContent += openTag;
+                            newContent += mdValue.substring(startSelection);
+
+                            isTag = true;
+                        }
+
+                        if(endNode.parentNode == child || endNode == child) {
+                            newContent += mdValue.substring(0, endSelection);
+                            newContent += closeTag;
+                            newContent += mdValue.substring(endSelection);
+                            
+                            isTag = true;
+                        }
+
+                        if(!isTag) {
+                            newContent += mdValue;
                         }
                     }
                 }
