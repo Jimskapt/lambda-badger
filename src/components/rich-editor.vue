@@ -14,7 +14,7 @@ div
                 v-icon edit
                 span &nbsp;{{ $t('Rich text') }}
             v-tab-item
-                pre(ref="render", contenteditable="true", v-html="htmlContent")
+                pre(ref="render", contenteditable="true", v-html="htmlContent", @input="rebuildMarkdownFromHTML")
             v-tab
                 v-icon code
                 span &nbsp;{{ $t('Markdown code') }}
@@ -32,23 +32,26 @@ function parser(input) {
         const markdownRules = [
             {
                 tag: 'strong',
-                regex: /\*\*(.+)\*\*/gms,
+                regex: /(\*\*)(.+)\*\*/gms,
                 outter_index: 0,
-                inner_index: 1,
+                inner_index: 2,
+                start_tag_index: 1,
                 shift_left: [],
             },
             {
                 tag: 'em',
-                regex: /(^|[^*])(\*(.+)\*)([^*]|$)/gms,
+                regex: /(^|[^*])((\*)(.+)\*)([^*]|$)/gms,
                 outter_index: 2,
-                inner_index: 3,
+                inner_index: 4,
+                start_tag_index: 3,
                 shift_left: [1],
             },
             {
                 tag: 'h1',
-                regex: /^# (.+)\n/gm,
+                regex: /^(# )(.+)\n/gm,
                 outter_index: 0,
-                inner_index: 1,
+                inner_index: 2,
+                start_tag_index: 1,
                 shift_left: [],
             },
         ];
@@ -83,7 +86,10 @@ function parser(input) {
                 if(typeof(firstRule.rule.tag_arguments) !== 'undefined') {
                     result += ' ' + firstRule.rule.tag_arguments;
                 }
-                result += ' md-outter="' + firstRule.test[firstRule.rule.outter_index] + '"'
+                result += ' md-outter="' + firstRule.test[firstRule.rule.outter_index] + '"';
+                if(typeof(firstRule.rule.start_tag_index) !== 'undefined') {
+                    result += ' md-start-tag="' + firstRule.test[firstRule.rule.start_tag_index] + '"';
+                }
                 result += '>' + parser(firstRule.test[firstRule.rule.inner_index]) + '</' + firstRule.rule.tag + '>';
             }
             result += parser(input.substring(firstRule.position + firstRule.test[firstRule.rule.outter_index].length));
@@ -115,10 +121,84 @@ export default {
         value(val) {
             this.markdownContent = val;
         },
+        /* TODO
+        markdownContent() {
+            const selection = window.getSelection();
+
+            let startSelection = selection.anchorOffset;
+            let startNode = selection.anchorNode;
+
+            let endSelection = selection.focusOffset;
+            let endNode = selection.focusNode;
+
+            if(startSelection > endSelection && startNode == endNode) {
+                const temp = startSelection;
+                const tempNode = startNode;
+
+                startSelection = endSelection;
+                startNode = endNode;
+
+                endSelection = temp;
+                endNode = tempNode;
+            }
+
+            let selectionStartIndex = 0;
+            let selectionEndIndex = 0;
+            for (let i_childNodes = 0; i_childNodes < this.$refs.render.childNodes.length; i_childNodes++) {
+                const child = this.$refs.render.childNodes[i_childNodes];
+
+                if(startNode.parentNode == child || startNode == child) {
+                    selectionStartIndex = i_childNodes+1;
+                }
+                if(endNode.parentNode == child || endNode == child) {
+                    selectionEndIndex = i_childNodes+1;
+                }
+            }
+
+            const that = this;
+            setTimeout(function() {
+                let range = document.createRange();
+
+                startNode = that.$refs.render.childNodes[selectionStartIndex];
+                endNode = that.$refs.render.childNodes[selectionEndIndex];
+
+                range.setStart(startNode, 0);
+                range.setEnd(endNode, endNode.textContent.length - 1);
+
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+            }, 200);
+        }
+        */
     },
     methods: {
         change(val) {
             this.$emit('input', val);
+        },
+        rebuildMarkdownFromHTML() {
+            let newContent = '';
+            for (let i_childNodes = 0; i_childNodes < this.$refs.render.childNodes.length; i_childNodes++) {
+                const child = this.$refs.render.childNodes[i_childNodes];
+
+                let mdValue = '';
+
+                if(typeof(child.attributes) !== 'undefined') {
+                    for (let i_attr = 0; i_attr < child.attributes.length; i_attr++) {
+                        const attr = child.attributes[i_attr];
+                        if(attr.name === 'md-outter') {
+                            mdValue = attr.value;
+                        }
+                    }
+                } else {
+                    mdValue = child.wholeText;
+                }
+
+                newContent += mdValue;
+            }
+
+            this.markdownContent = newContent;
+
+            this.change(newContent);
         },
         addTag(openTag, closeTag) {
             const selection = window.getSelection();
@@ -156,13 +236,15 @@ export default {
                     const child = this.$refs.render.childNodes[i_childNodes];
 
                     let mdValue = '';
+                    let startTag = '';
 
                     if(typeof(child.attributes) !== 'undefined') {
                         for (let i_attr = 0; i_attr < child.attributes.length; i_attr++) {
                             const attr = child.attributes[i_attr];
                             if(attr.name === 'md-outter') {
                                 mdValue = attr.value;
-                                break;
+                            } else if(attr.name === 'md-start-tag') {
+                                startTag = attr.value;
                             }
                         }
                     } else {
@@ -171,11 +253,11 @@ export default {
 
                     if(startNode == endNode) {
                         if(startNode.parentNode == child || startNode == child) {
-                            newContent += mdValue.substring(0, startSelection);
+                            newContent += mdValue.substring(0, startSelection + startTag.length);
                             newContent += openTag;
-                            newContent += mdValue.substring(startSelection, endSelection);
+                            newContent += mdValue.substring(startSelection + startTag.length, endSelection + startTag.length);
                             newContent += closeTag;
-                            newContent += mdValue.substring(endSelection);
+                            newContent += mdValue.substring(endSelection + startTag.length);
                         } else {
                             newContent += mdValue;
                         }
@@ -206,6 +288,8 @@ export default {
             }
 
             this.markdownContent = newContent;
+
+            this.change(newContent);
         }
     },
 };
