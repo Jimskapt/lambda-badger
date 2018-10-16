@@ -8,6 +8,12 @@ div
                 v-icon format_italic
             v-btn(@click="addTag('\\n# ','\\n')")
                 v-icon title
+            v-btn(@click="addTag('~~','~~')")
+                v-icon strikethrough_s
+            v-btn(@click="addTag('\\n- ','\\n')")
+                v-icon format_list_bulleted
+            v-btn(@click="addTag('\\n\\n1. ','\\n\\n')")
+                v-icon format_list_numbered
     div(class="content")
         v-tabs(model="tabs", centered, grow, color="primary")
             v-tab
@@ -32,25 +38,103 @@ function parser(input) {
         const markdownRules = [
             {
                 tag: 'strong',
-                regex: /(\*\*)(.+)\*\*/gms,
+                regex: /((\*\*)|(__))(.+)((\*\*)|(__))/gms,
                 outter_index: 0,
-                inner_index: 2,
+                inner_index: 4,
                 start_tag_index: 1,
                 shift_left: [],
             },
             {
                 tag: 'em',
-                regex: /(^|[^*])((\*)(.+)\*)([^*]|$)/gms,
+                regex: /(^|[^*])((\*)([^*]+)\*)([^*]|$)/gms,
                 outter_index: 2,
                 inner_index: 4,
                 start_tag_index: 3,
                 shift_left: [1],
             },
             {
+                tag: 'em',
+                regex: /(_)(.+)_/gms,
+                outter_index: 0,
+                inner_index: 2,
+                start_tag_index: 1,
+                shift_left: [],
+            },
+            {
+                tag: 'del',
+                regex: /(~~)(.+)~~/gms,
+                outter_index: 0,
+                inner_index: 2,
+                start_tag_index: 1,
+                shift_left: [],
+            },
+            {
                 tag: 'h1',
                 regex: /^(# )(.+)\n/gm,
                 outter_index: 0,
                 inner_index: 2,
+                start_tag_index: 1,
+                shift_left: [],
+            },
+            {
+                tag: 'h2',
+                regex: /^(## )(.+)\n/gm,
+                outter_index: 0,
+                inner_index: 2,
+                start_tag_index: 1,
+                shift_left: [],
+            },
+            {
+                tag: 'h3',
+                regex: /^(### )(.+)\n/gm,
+                outter_index: 0,
+                inner_index: 2,
+                start_tag_index: 1,
+                shift_left: [],
+            },
+            {
+                tag: 'h4',
+                regex: /^(#### )(.+)\n/gm,
+                outter_index: 0,
+                inner_index: 2,
+                start_tag_index: 1,
+                shift_left: [],
+            },
+            {
+                tag: 'h5',
+                regex: /^(##### )(.+)\n/gm,
+                outter_index: 0,
+                inner_index: 2,
+                start_tag_index: 1,
+                shift_left: [],
+            },
+            {
+                tag: 'h6',
+                regex: /^(###### )(.+)\n/gm,
+                outter_index: 0,
+                inner_index: 2,
+                start_tag_index: 1,
+                shift_left: [],
+            },
+            {
+                tag: 'ul',
+                regex: /(\n)((- ?(.+)\n)+)\n/gm,
+                outter_index: 0,
+                inner_index: 2,
+                shift_left: [],
+            },
+            {
+                tag: 'ol',
+                regex: /(\n)(([0-9]+\. ?(.+)\n)+)\n/gm,
+                outter_index: 0,
+                inner_index: 2,
+                shift_left: [],
+            },
+            {
+                tag: 'li',
+                regex: /^((-|([0-9]+\.)) ?)(.+)$/gm,
+                outter_index: 0,
+                inner_index: 4,
                 start_tag_index: 1,
                 shift_left: [],
             },
@@ -80,7 +164,9 @@ function parser(input) {
             result += before;
 
             if(typeof(firstRule.rule.formatter) === 'function') {
-                result += firstRule.rule.formatter(firstRule.test[firstRule.rule.inner_index]);
+                if(typeof(firstRule.rule.inner_index) !== 'undefined') {
+                    result += firstRule.rule.formatter(firstRule.test[firstRule.rule.inner_index]);
+                }
             } else {
                 result += '<' + firstRule.rule.tag;
                 if(typeof(firstRule.rule.tag_arguments) !== 'undefined') {
@@ -90,7 +176,11 @@ function parser(input) {
                 if(typeof(firstRule.rule.start_tag_index) !== 'undefined') {
                     result += ' md-start-tag="' + firstRule.test[firstRule.rule.start_tag_index] + '"';
                 }
-                result += '>' + parser(firstRule.test[firstRule.rule.inner_index]) + '</' + firstRule.rule.tag + '>';
+                if(typeof(firstRule.rule.inner_index) !== 'undefined') {
+                    result += '>' + parser(firstRule.test[firstRule.rule.inner_index]) + '</' + firstRule.rule.tag + '>';
+                } else {
+                    result += '/>';
+                }
             }
             result += parser(input.substring(firstRule.position + firstRule.test[firstRule.rule.outter_index].length));
         } else {
