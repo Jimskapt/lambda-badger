@@ -14,8 +14,12 @@ div
                 v-icon format_list_bulleted
             v-btn(@click="addTag('\\n\\n1. ','\\n\\n')")
                 v-icon format_list_numbered
+            v-btn(@click="addTag('[x] ','\\n')")
+                v-icon check_box
+            v-btn(@click="addTag('[ ] ','\\n')")
+                v-icon check_box_outline_blank
     div(class="content")
-        v-tabs(model="tabs", centered, grow, color="primary")
+        v-tabs(v-model="tabs", centered, grow, color="primary")
             v-tab
                 v-icon edit
                 span &nbsp;{{ $t('Rich text') }}
@@ -138,6 +142,32 @@ function parser(input) {
                 start_tag_index: 1,
                 shift_left: [],
             },
+            {
+                tag: 'code',
+                regex: /(`)(.+)`/gm,
+                outter_index: 0,
+                inner_index: 2,
+                start_tag_index: 1,
+                shift_left: [],
+            },
+            {
+                formatter: function(inner, outter) {
+                    return '<label md-outter="' + outter + '" md-start-tag="[ ] "><input type="checkbox" disabled"/>' + parser(inner) + '</label>';
+                },
+                regex: /\[ \] ([^\n]+)(\n|$)/gm,
+                outter_index: 0,
+                inner_index: 1,
+                shift_left: [],
+            },
+            {
+                formatter: function(inner, outter) {
+                    return '<label md-outter="' + outter + '" md-start-tag="[x] "><input type="checkbox" disabled checked/><del>' + parser(inner) + '</del></label>';
+                },
+                regex: /\[x\] ([^\n]+)(\n|$)/gm,
+                outter_index: 0,
+                inner_index: 1,
+                shift_left: [],
+            },
         ];
 
         markdownRules.forEach((rule) => {
@@ -165,7 +195,7 @@ function parser(input) {
 
             if(typeof(firstRule.rule.formatter) === 'function') {
                 if(typeof(firstRule.rule.inner_index) !== 'undefined') {
-                    result += firstRule.rule.formatter(firstRule.test[firstRule.rule.inner_index]);
+                    result += firstRule.rule.formatter(firstRule.test[firstRule.rule.inner_index], firstRule.test[firstRule.rule.outter_index]);
                 }
             } else {
                 result += '<' + firstRule.rule.tag;
@@ -198,7 +228,7 @@ export default {
     data() {
         return {
             tool: [],
-            tabs: null,
+            tabs: 1,
             markdownContent: '',
         };
     },
