@@ -24,7 +24,7 @@ div
                 v-icon edit
                 span &nbsp;{{ $t('Rich text') }}
             v-tab-item
-                pre(ref="render", contenteditable="true", v-html="htmlContent", @input="rebuildMarkdownFromHTML")
+                pre(ref="render", contenteditable="true", @input="rebuildMarkdownFromHTML")
             v-tab
                 v-icon code
                 span &nbsp;{{ $t('Markdown code') }}
@@ -34,7 +34,7 @@ div
 
 <script>
 function parser(input) {
-    let result = '';
+    let result = document.createDocumentFragment();
 
     if(input.trim() !== '') {
         let firstRule = {};
@@ -152,7 +152,18 @@ function parser(input) {
             },
             {
                 formatter: function(inner, outter) {
-                    return '<label md-outter="' + outter + '" md-start-tag="[ ] "><input type="checkbox" disabled"/>' + parser(inner) + '</label>';
+                    const label = document.createElement('label');
+                    label.setAttribute('md-outter', outter);
+                    label.setAttribute('md-start-tag', '[ ] ');
+
+                    const input = document.createElement('input');
+                    input.setAttribute('type', 'checkbox');
+                    input.setAttribute('disabled', true);
+
+                    label.appendChild( input );
+                    label.appendChild( parser(inner) );
+
+                    return label;
                 },
                 regex: /\[ \] ([^\n]+)(\n|$)/gm,
                 outter_index: 0,
@@ -161,7 +172,22 @@ function parser(input) {
             },
             {
                 formatter: function(inner, outter) {
-                    return '<label md-outter="' + outter + '" md-start-tag="[x] "><input type="checkbox" disabled checked/><del>' + parser(inner) + '</del></label>';
+                    const label = document.createElement('label');
+                    label.setAttribute('md-outter', outter);
+                    label.setAttribute('md-start-tag', '[x] ');
+
+                    const input = document.createElement('input');
+                    input.setAttribute('type', 'checkbox');
+                    input.setAttribute('disabled', true);
+                    input.setAttribute('checked', true);
+
+                    const del = document.createElement('del');
+                    del.appendChild( parser(inner) );
+
+                    label.appendChild( input );
+                    label.appendChild( del );
+
+                    return label;
                 },
                 regex: /\[x\] ([^\n]+)(\n|$)/gm,
                 outter_index: 0,
@@ -190,32 +216,31 @@ function parser(input) {
 
         if(typeof(firstRule.position) !== 'undefined' && typeof(firstRule.rule) !== 'undefined' && typeof(firstRule.test) !== 'undefined') {
             const before = input.substring(0, firstRule.position);
-            // result += '<span md-outter="' + before + '">' + before + '</span>';
-            result += before;
+            if(before !== '') {
+                result.appendChild( document.createTextNode(before) );
+            }
 
             if(typeof(firstRule.rule.formatter) === 'function') {
                 if(typeof(firstRule.rule.inner_index) !== 'undefined') {
-                    result += firstRule.rule.formatter(firstRule.test[firstRule.rule.inner_index], firstRule.test[firstRule.rule.outter_index]);
+                    result.appendChild( firstRule.rule.formatter(firstRule.test[firstRule.rule.inner_index], firstRule.test[firstRule.rule.outter_index]) );
                 }
             } else {
-                result += '<' + firstRule.rule.tag;
-                if(typeof(firstRule.rule.tag_arguments) !== 'undefined') {
-                    result += ' ' + firstRule.rule.tag_arguments;
-                }
-                result += ' md-outter="' + firstRule.test[firstRule.rule.outter_index] + '"';
+                var el = document.createElement(firstRule.rule.tag);
+
+                el.setAttribute('md-outter', firstRule.test[firstRule.rule.outter_index]);
                 if(typeof(firstRule.rule.start_tag_index) !== 'undefined') {
-                    result += ' md-start-tag="' + firstRule.test[firstRule.rule.start_tag_index] + '"';
+                    el.setAttribute('md-start-tag', firstRule.test[firstRule.rule.start_tag_index]);
                 }
                 if(typeof(firstRule.rule.inner_index) !== 'undefined') {
-                    result += '>' + parser(firstRule.test[firstRule.rule.inner_index]) + '</' + firstRule.rule.tag + '>';
-                } else {
-                    result += '/>';
+                    el.appendChild( parser(firstRule.test[firstRule.rule.inner_index]) );
                 }
+
+                result.appendChild( el );
             }
-            result += parser(input.substring(firstRule.position + firstRule.test[firstRule.rule.outter_index].length));
+
+            result.appendChild( parser(input.substring(firstRule.position + firstRule.test[firstRule.rule.outter_index].length)) );
         } else {
-            // result += '<span md-outter="' + input + '">' + input + '</span>';
-            result += input;
+            result.appendChild( document.createTextNode(input) );
         }
     }
 
@@ -232,64 +257,17 @@ export default {
             markdownContent: '',
         };
     },
-    computed: {
-        htmlContent() {
-            return parser(this.markdownContent);
-        },
-    },
     watch: {
         value(val) {
             this.markdownContent = val;
         },
-        /* TODO
-        markdownContent() {
-            const selection = window.getSelection();
-
-            let startSelection = selection.anchorOffset;
-            let startNode = selection.anchorNode;
-
-            let endSelection = selection.focusOffset;
-            let endNode = selection.focusNode;
-
-            if(startSelection > endSelection && startNode == endNode) {
-                const temp = startSelection;
-                const tempNode = startNode;
-
-                startSelection = endSelection;
-                startNode = endNode;
-
-                endSelection = temp;
-                endNode = tempNode;
+        markdownContent(val) {
+            while(this.$refs.render.firstChild) {
+                this.$refs.render.removeChild(this.$refs.render.firstChild);
             }
 
-            let selectionStartIndex = 0;
-            let selectionEndIndex = 0;
-            for (let i_childNodes = 0; i_childNodes < this.$refs.render.childNodes.length; i_childNodes++) {
-                const child = this.$refs.render.childNodes[i_childNodes];
-
-                if(startNode.parentNode == child || startNode == child) {
-                    selectionStartIndex = i_childNodes+1;
-                }
-                if(endNode.parentNode == child || endNode == child) {
-                    selectionEndIndex = i_childNodes+1;
-                }
-            }
-
-            const that = this;
-            setTimeout(function() {
-                let range = document.createRange();
-
-                startNode = that.$refs.render.childNodes[selectionStartIndex];
-                endNode = that.$refs.render.childNodes[selectionEndIndex];
-
-                range.setStart(startNode, 0);
-                range.setEnd(endNode, endNode.textContent.length - 1);
-
-                window.getSelection().removeAllRanges();
-                window.getSelection().addRange(range);
-            }, 200);
-        }
-        */
+            this.$refs.render.appendChild( parser(val) );
+        },
     },
     methods: {
         change(val) {
