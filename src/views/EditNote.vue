@@ -11,13 +11,7 @@
 				v-toolbar-title {{ (exists) ? $t('Edit the note') : $t('Create a note') }}
 			v-card-text
 				v-text-field(:label="$t('Title')", v-model="dbDoc.title")
-				rich-editor(v-model="dbDoc.content")
-				br
-				br
-				hr
-				br
-				br
-				v-textarea(:label="$t('Content')", v-model="dbDoc.content", auto-grow, autofocus)
+				rich-editor(v-model="dbDoc.content", :label="$t('Content')")
 				v-combobox(
 					chips,
 					deletable-chips,

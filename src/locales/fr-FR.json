@@ -57,6 +57,5 @@
   "Please paste your data in the following field and click on the button in the the bottom of the page, in order to load them in this app.": "Veuillez coller vos données dans le champ suivant et clicker sur le bouton en bas de la page pour les importer dans cette application.",
   "The note is not saved, you will lost the changes if your are leaving the page. Please confirm the exit.": "La note n'est pas enregistrée, vous allez perdre les changements si vous quittez la page. Veuillez confirmer que vous souhaitez partir maintenant.",
   "no subject": "pas de sujet",
-  "Rich text": "Texte enrichi",
-  "Markdown code": "Code Markdown"
+  "Preview": "Prévisualisation"
 }
