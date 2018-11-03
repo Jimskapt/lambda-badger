@@ -57,5 +57,10 @@
   "Please paste your data in the following field and click on the button in the the bottom of the page, in order to load them in this app.": "Veuillez coller vos données dans le champ suivant et clicker sur le bouton en bas de la page pour les importer dans cette application.",
   "The note is not saved, you will lost the changes if your are leaving the page. Please confirm the exit.": "La note n'est pas enregistrée, vous allez perdre les changements si vous quittez la page. Veuillez confirmer que vous souhaitez partir maintenant.",
   "no subject": "pas de sujet",
-  "Preview": "Prévisualisation"
+  "Preview": "Prévisualisation",
+  "Display archives": "Afficher les archives",
+  "Archive this note": "Archiver cette note",
+  "Unarchive this note": "Désarchiver cette note",
+  "Show the content of the note": "Afficher le contenu de la note",
+  "Hide the content of the note": "Cacher le contenu de la note"
 }

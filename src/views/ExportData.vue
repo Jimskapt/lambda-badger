@@ -10,30 +10,32 @@ div
 				v-icon archive
 			v-toolbar-title {{ $t('Export your data manually') }}
 		v-card-text
-			v-autocomplete(
-				v-model="subjectsFilters",
-				:items="filters",
-				:label="$t('Filter')",
-				class="mb-2 mx-1",
-				prepend-inner-icon="filter_list",
-				v-if="notes !== undefined && notes.length > 0",
-				flat, multiple, dense, chips, deletable-chips, small-chips, clearable, hide-no-data, hide-details)
-			v-switch(:label="$t('Make it human readable')", v-model="readable")
-			v-switch(:label="$t('Include confidential notes')", v-model="confidentials")
+			notes-filter(v-model="filters")
+			div(class="mx-1")
+				v-checkbox(:label="$t('Make it human readable')", v-model="readable")
+				v-checkbox(:label="$t('Include confidential notes')", v-model="show_confidential")
 			v-alert(type="info", :value="true") {{ $t('In order to save your data, just copy and paste the following data in an text editor (like notepad), and then save it as *.json file.') }}
 			v-divider(class="my-3")
 			v-textarea(:label="$t('Your data')", readonly, hide-details, auto-grow, v-model="dbData")
 </template>
 
 <script>
+import NotesFilter from '@/components/notes-filter.vue';
+
 export default {
 	name: 'export-data',
 	data() {
 		return {
 			readable: true,
-			confidentials: true,
-			subjectsFilters: [],
+			show_confidential: true,
+			filters: {
+				subjects: [],
+				show_archives: false,
+			},
 		};
+	},
+	components: {
+		'notes-filter': NotesFilter,
 	},
 	computed: {
 		notes () {
@@ -46,26 +48,34 @@ export default {
 
 			return this.notes.filter((note) => {
 
+				const archiveFilter = function() {
+					if(that.filters.show_archives === true) {
+						return true;
+					} else {
+						return !(note.archived === true);
+					}
+				}
+
 				const confidentialFilter = function() {
-					return !(that.confidentials === false && note.confidential === true);
+					return !(that.show_confidential === false && note.confidential === true);
 				}
 
 				const subjectFilter = function() {
-					let result = !(that.subjectsFilters.length > 0);
+					let result = !(that.filters.subjects.length > 0);
 
 					if(typeof(note.subjects) !== 'undefined') {
-						if(that.subjectsFilters.includes('*' + that.$t('no subject') + '*') && note.subjects.length === 0) {
+						if(that.filters.subjects.includes('*' + that.$t('no subject') + '*') && note.subjects.length === 0) {
 							result = true;
 						} else {
 							for (let i = 0; i < note.subjects.length; i++) {
-								if(that.subjectsFilters.includes(note.subjects[i])) {
+								if(that.filters.subjects.includes(note.subjects[i])) {
 									result = true;
 									break;
 								}
 							}
 						}
 					} else {
-						if(that.subjectsFilters.includes('*' + that.$t('no subject') + '*')) {
+						if(that.filters.subjects.includes('*' + that.$t('no subject') + '*')) {
 							result = true;
 						}
 					}
@@ -73,22 +83,25 @@ export default {
 					return result;
 				}
 
-				return confidentialFilter() && subjectFilter();
+				return archiveFilter() && confidentialFilter() && subjectFilter();
 			});
 		},
 		dbData() {
 			return JSON.stringify(
 				{
 					notes: {
-						filters: this.subjectsFilters.map((filter) => { return (filter === '*' + this.$t('no subject') + '*') ? '*no subject*' : filter; }),
-						add_confidential: this.confidentials,
+						filters: {
+							subjects: this.filters.subjects.map((filter) => { return (filter === '*' + this.$t('no subject') + '*') ? '*no subject*' : filter; }),
+							show_archives: this.filters.show_archives,
+							show_confidential: this.show_confidential,
+						},
 						items: this.filtered_notes,
 					},
 					app_version: require('../../package.json').version,
 					date: new Date(),
 				}, null, (this.readable) ? '\t': '');
 		},
-		filters() {
+		availableFilters() {
 			let result = ['*' + this.$t('no subject') + '*'];
 
 			result = result.concat(Object.keys(this.$store.state.subjects));

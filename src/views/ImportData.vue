@@ -16,7 +16,7 @@ div
 		v-card-actions
 			v-btn(large, block, color="primary", @click="load", :disabled="userData.trim() === ''", :loading="loading")
 				v-icon unarchive
-				span {{ $t('Import your data') }}
+				span {{ $t('Import your data manually') }}
 </template>
 
 <script>

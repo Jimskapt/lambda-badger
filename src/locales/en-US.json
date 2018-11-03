@@ -57,5 +57,10 @@
   "Please paste your data in the following field and click on the button in the the bottom of the page, in order to load them in this app.": "Please paste your data in the following field and click on the button in the the bottom of the page, in order to load them in this app.",
   "The note is not saved, you will lost the changes if your are leaving the page. Please confirm the exit.": "The note is not saved, you will lost the changes if your are leaving the page. Please confirm the exit.",
   "no subject": "no subject",
-  "Preview": "Preview"
+  "Preview": "Preview",
+  "Display archives": "Display archives",
+  "Archive this note": "Archive this note",
+  "Unarchive this note": "Unarchive this note",
+  "Show the content of the note": "Show the content of the note",
+  "Hide the content of the note": "Hide the content of the note"
 }

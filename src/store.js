@@ -410,6 +410,30 @@ const store = new Vuex.Store({
         console.error('$store.actions.setNotesFilter : payload or payload.value is undefined');
       }
     },
+    toggleArchive(context, payload) {
+      return new Promise((resolve, reject) => {
+        if(typeof(payload._id) === 'undefined') {
+          reject('$store.actions.toggleArchive : missing "_id" in payload');
+          return;
+        }
+
+        let data = cloneDeep(context.state.notes[payload._id]);
+        if(typeof(data) !== 'undefined') {
+
+          if(typeof(data.archived) === 'undefined') {
+            data.archived = true;
+          } else {
+            data.archived = !data.archived;
+          }
+
+          db.put(data)
+            .then((res) => {
+              resolve(res);
+            })
+            .catch((err) => { reject(err); });
+        }
+      });
+    },
   },
 });
 
