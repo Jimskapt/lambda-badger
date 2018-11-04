@@ -7,7 +7,7 @@ div
                 p(slot="header")
                     v-icon visibility
                     |  {{ $t('Preview') }}
-                pre(v-html="htmlContent")
+                div(v-html="htmlContent")
 </template>
 
 <script>

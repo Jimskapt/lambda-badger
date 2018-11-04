@@ -1,6 +1,6 @@
 <template lang="pug">
 v-card
-    v-toolbar(:color="(is_archive === true) ? 'secondary' : 'primary'", dense)
+    v-toolbar(:color="(is_archive === true) ? 'black' : 'primary'", dense)
         v-toolbar-title {{ title }}
         v-spacer
         v-toolbar-items
