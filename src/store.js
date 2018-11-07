@@ -26,6 +26,7 @@ const store = new Vuex.Store({
   state: {
     settings: DEFAULT_SETTINGS,
     notes: {},
+    notes_loaded: false,
     subjects: {},
   },
   mutations: {
@@ -207,6 +208,9 @@ const store = new Vuex.Store({
         console.error('$store.mutations.setNotesFilter : payload or payload.value is undefined');
       }
     },
+    setNotesLoaded(state) {
+      state.notes_loaded = true;
+    },
   },
   actions: {
     fetchAllNotes(context) {
@@ -216,6 +220,8 @@ const store = new Vuex.Store({
             res.rows.forEach((row) => {
               context.commit('setNote', {data: row.doc, no_toast: true});
             });
+            context.commit('setNotesLoaded');
+            resolve();
           })
           .catch((err) => {
             reject(err);

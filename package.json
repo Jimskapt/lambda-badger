@@ -33,6 +33,7 @@
     "cross-spawn": "^6.0.5",
     "is-stream": "^1.1.0",
     "lodash.clonedeep": "^4.5.0",
+    "lodash.isequal": "^4.5.0",
     "markdown-it": "^8.4.2",
     "markdown-it-checkbox": "^1.1.0",
     "material-design-icons-iconfont": "^3.0.3",

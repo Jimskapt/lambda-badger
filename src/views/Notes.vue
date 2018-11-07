@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-	v-toolbar(color="primary", class="mb-2 mx-1", style="border-radius: 2px;")
+	v-toolbar(dark, color="primary", class="mb-2 mx-1", style="border-radius: 2px;")
 		v-toolbar-side-icon(:to="{name: 'edit-note', params: {id: 1}}")
 			v-icon event_note
 		v-toolbar-title {{ $t('Notes') }}
@@ -34,6 +34,15 @@ div
 <script>
 import NoteDisplay from '@/components/note-display.vue';
 import NotesFilter from '@/components/notes-filter.vue';
+import cloneDeep from 'lodash.clonedeep';
+import isEqual from 'lodash.isequal';
+
+function notesAreSame(a, b) {
+  return  a.title === b.title &&
+          a.content === b.content &&
+          a.data_type === b.data_type &&
+          isEqual(a.subjects, b.subjects);
+}
 
 export default {
 	name: 'notes',
@@ -50,6 +59,14 @@ export default {
 		'notes-filter': NotesFilter,
 	},
 	watch: {
+		'$i18n.locale': function() {
+			this.updateInitNotes();
+		},
+		'$store.state.notes_loaded': function(value) {
+			if(value === true) {
+				this.updateInitNotes();
+			}
+		},
 		'$store.state.settings.notes_filter': function(value) {
 			this.filters.subjects = value;
 		},
@@ -105,9 +122,45 @@ export default {
 				this.$store.dispatch('setNotesFilter', {value: this.filters.subjects});
 			}
 		},
+		updateInitNotes() {
+			/* eslint-disable no-undef */
+			let locale = this.$i18n.locale;
+			if(typeof(INITIAL_STATE.contents[this.$i18n.locale]) === 'undefined') {
+				locale = 'en-US';
+				console.warn(this.$i18n.locale, 'does not exists in INITIAL_STATE.contents, fall back to en-US locale.');
+			}
+
+			if(Object.keys(this.$store.state.notes).length <= 0) {
+				if(typeof(INITIAL_STATE) !== 'undefined' && typeof(INITIAL_STATE.contents) !== 'undefined') {
+					for (let i = 0; i < INITIAL_STATE.contents[locale].length; i++) {
+						const note = cloneDeep(INITIAL_STATE.contents[locale][i]);
+						note.data_type = 'note';
+						this.$store.dispatch('setNote', {data: note});
+					}
+				}
+			} else {
+				for (let i = 0; i < INITIAL_STATE.contents[locale].length; i++) {
+					const note = cloneDeep(INITIAL_STATE.contents[locale][i]);
+					note.data_type = 'note';
+
+					if(typeof(note._id) !== 'undefined') {
+						const found = this.$store.state.notes[note._id];
+						if(typeof(found) !== 'undefined' && !notesAreSame(note, found)) {
+							note._rev = found._rev;
+							this.$store.dispatch('setNote', {data: note});
+						}
+					}
+				}
+			}
+			/* eslint-enable no-undef */
+		},
 	},
 	mounted() {
 		this.filters.subjects = this.$store.state.settings.notes_filter;
+
+		if(this.$store.state.notes_loaded === true) {
+			this.updateInitNotes();
+		}
 	},
 };
 </script>

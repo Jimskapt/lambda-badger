@@ -6,6 +6,7 @@ node_modules
 selenium-debug.log
 
 /www
+/public/settings.js
 
 # local env files
 .env.local
