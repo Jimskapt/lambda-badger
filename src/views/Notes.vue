@@ -123,36 +123,38 @@ export default {
 			}
 		},
 		updateInitNotes() {
-			/* eslint-disable no-undef */
-			let locale = this.$i18n.locale;
-			if(typeof(INITIAL_STATE.contents[this.$i18n.locale]) === 'undefined') {
-				locale = 'en-US';
-				console.warn(this.$i18n.locale, 'does not exists in INITIAL_STATE.contents, fall back to en-US locale.');
-			}
-
-			if(Object.keys(this.$store.state.notes).length <= 0) {
-				if(typeof(INITIAL_STATE) !== 'undefined' && typeof(INITIAL_STATE.contents) !== 'undefined') {
-					for (let i = 0; i < INITIAL_STATE.contents[locale].length; i++) {
-						const note = cloneDeep(INITIAL_STATE.contents[locale][i]);
-						note.data_type = 'note';
-						this.$store.dispatch('setNote', {data: note});
-					}
+			if(this.$store.state.notes_loaded === true) {
+				/* eslint-disable no-undef */
+				let locale = this.$i18n.locale;
+				if(typeof(INITIAL_STATE.contents[this.$i18n.locale]) === 'undefined') {
+					locale = 'en-US';
+					console.warn(this.$i18n.locale, 'does not exists in INITIAL_STATE.contents, fall back to en-US locale.');
 				}
-			} else {
-				for (let i = 0; i < INITIAL_STATE.contents[locale].length; i++) {
-					const note = cloneDeep(INITIAL_STATE.contents[locale][i]);
-					note.data_type = 'note';
 
-					if(typeof(note._id) !== 'undefined') {
-						const found = this.$store.state.notes[note._id];
-						if(typeof(found) !== 'undefined' && !notesAreSame(note, found)) {
-							note._rev = found._rev;
+				if(Object.keys(this.$store.state.notes).length <= 0) {
+					if(typeof(INITIAL_STATE) !== 'undefined' && typeof(INITIAL_STATE.contents) !== 'undefined') {
+						for (let i = 0; i < INITIAL_STATE.contents[locale].length; i++) {
+							const note = cloneDeep(INITIAL_STATE.contents[locale][i]);
+							note.data_type = 'note';
 							this.$store.dispatch('setNote', {data: note});
 						}
 					}
+				} else {
+					for (let i = 0; i < INITIAL_STATE.contents[locale].length; i++) {
+						const note = cloneDeep(INITIAL_STATE.contents[locale][i]);
+						note.data_type = 'note';
+
+						if(typeof(note._id) !== 'undefined') {
+							const found = this.$store.state.notes[note._id];
+							if(typeof(found) !== 'undefined' && !notesAreSame(note, found)) {
+								note._rev = found._rev;
+								this.$store.dispatch('setNote', {data: note});
+							}
+						}
+					}
 				}
+				/* eslint-enable no-undef */
 			}
-			/* eslint-enable no-undef */
 		},
 	},
 	mounted() {

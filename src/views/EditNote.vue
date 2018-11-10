@@ -5,7 +5,7 @@
 				v-icon chevron_left
 				span {{ $t('Go back') }}
 		v-card
-			v-toolbar(color="primary")
+			v-toolbar(dark, color="primary")
 				v-toolbar-side-icon
 					v-icon {{ (exists) ? 'edit' : 'add' }}
 				v-toolbar-title {{ (exists) ? $t('Edit the note') : $t('Create a note') }}

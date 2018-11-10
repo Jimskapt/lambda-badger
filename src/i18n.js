@@ -19,8 +19,13 @@ function loadLocaleMessages () {
   return messages;
 }
 
+let default_locale = 'en-US';
+if(navigator.language === 'fr') {
+  default_locale = 'fr-FR';
+}
+
 export default new VueI18n({
-  locale: process.env.VUE_APP_I18N_LOCALE || 'en-US',
+  locale: process.env.VUE_APP_I18N_LOCALE || default_locale,
   fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en-US',
   messages: loadLocaleMessages(),
 });

@@ -534,7 +534,9 @@ dbSettings.get('locale')
   .then((doc) => {
     store.commit('setLocale', {value: doc.value});
   })
-  .catch(() => {}); // error are not important
+  .catch(() => {
+    store.commit('setLocale', {value: i18n.locale});
+  });
 
 dbSettings.get('dark_mode')
   .then((doc) => {
