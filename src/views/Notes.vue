@@ -40,10 +40,10 @@ import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 
 function notesAreSame(a, b) {
-  return  a.title === b.title &&
-          a.content === b.content &&
-          a.data_type === b.data_type &&
-          isEqual(a.subjects, b.subjects);
+	return a.title === b.title &&
+		a.content === b.content &&
+		a.data_type === b.data_type &&
+		isEqual(a.subjects, b.subjects);
 }
 
 export default {

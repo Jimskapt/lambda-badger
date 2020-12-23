@@ -11,48 +11,48 @@ import Help from '../views/Help.vue';
 Vue.use(VueRouter);
 
 const routes = [
-  {
-    path: '/',
-    name: 'home',
-    redirect: {
-      name: 'notes'
-    },
-  },
-  {
-    path: '/settings',
-    name: 'settings',
-    component: Settings,
-  },
-  {
-    path: '/notes',
-    name: 'notes',
-    component: Notes,
-  },
-  {
-    path: '/note/edit/:id',
-    name: 'edit-note',
-    component: EditNote,
-    props: true,
-  },
-  {
-    path: '/help',
-    name: 'help',
-    component: Help,
-  },
-  {
-    path: '/export',
-    name: 'export-data',
-    component: ExportData,
-  },
-  {
-    path: '/import',
-    name: 'import-data',
-    component: ImportData,
-  },
+	{
+		path: '/',
+		name: 'home',
+		redirect: {
+			name: 'notes'
+		},
+	},
+	{
+		path: '/settings',
+		name: 'settings',
+		component: Settings,
+	},
+	{
+		path: '/notes',
+		name: 'notes',
+		component: Notes,
+	},
+	{
+		path: '/note/edit/:id',
+		name: 'edit-note',
+		component: EditNote,
+		props: true,
+	},
+	{
+		path: '/help',
+		name: 'help',
+		component: Help,
+	},
+	{
+		path: '/export',
+		name: 'export-data',
+		component: ExportData,
+	},
+	{
+		path: '/import',
+		name: 'import-data',
+		component: ImportData,
+	},
 ];
 
 const router = new VueRouter({
-  routes
+	routes
 });
 
 export default router;

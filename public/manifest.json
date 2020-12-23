@@ -1,8 +1,8 @@
 {
-  "name": "Lambda Badger",
-  "short_name": "Lambda Badger",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color":"#1E1E1E",
-  "theme_color":"#1E1E1E"
+	"name": "Lambda Badger",
+	"short_name": "Lambda Badger",
+	"start_url": "index.html",
+	"display": "standalone",
+	"background_color":"#1E1E1E",
+	"theme_color":"#1E1E1E"
 }

@@ -6,5 +6,5 @@ import Toasted from 'vue-toasted';
 import router from '../router';
 
 Vue.use(Toasted, {
-    router: router,
+	router: router,
 });
