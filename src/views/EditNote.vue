@@ -5,8 +5,8 @@
 				v-icon chevron_left
 				span {{ $t('Go back') }}
 		v-card
-			v-toolbar(dark, color="primary")
-				v-toolbar-side-icon
+			v-toolbar(color="primary")
+				v-app-bar-nav-icon
 					v-icon {{ (exists) ? 'edit' : 'add' }}
 				v-toolbar-title {{ (exists) ? $t('Edit the note') : $t('Create a note') }}
 			v-card-text
@@ -22,16 +22,17 @@
 					v-model="dbDoc.subjects",
 					item-text="name",
 					item-value="name")
-				v-tooltip(bottom)
-					v-switch(slot="activator", :label="$t('It is confidential')", v-model="dbDoc.confidential")
-					span {{ $t('The note will not be displayed by default, you will have to ask to show it') }}.
-				v-layout(column, mt-2)
-					v-flex
-						v-btn(large, block, color="primary", @click="saveNote")
+				template(v-slot:activator="{ on }")
+					v-tooltip(bottom, v-on="on")
+						v-switch(slot="activator", :label="$t('It is confidential')", v-model="dbDoc.confidential")
+						span {{ $t('The note will not be displayed by default, you will have to ask to show it') }}.
+				v-row
+					v-col
+						v-btn(block, color="primary", @click="saveNote")
 							v-icon {{ (exists) ? 'save' : 'add' }}
 							span {{ (exists) ? $t("Save") : $t("Create") }}
-					v-flex(v-if="exists")
-						v-btn(large, block, color="error", @click="deleteNote")
+					v-col(v-if="exists")
+						v-btn(block, color="error", @click="deleteNote")
 							v-icon delete
 							span {{ $t('Delete this note') }}
 </template>
@@ -56,7 +57,7 @@ export default {
 	},
 	computed: {
 		exists() {
-			return typeof(this.dbDoc._rev) !== 'undefined';
+			return this.dbDoc._rev !== undefined;
 		},
 	},
 	watch: {
@@ -111,7 +112,7 @@ export default {
 			this.$store.dispatch('setNote', {data: this.dbDoc})
 				.then((res) => {
 					if(res.ok) {
-						if(typeof(res.doc) !== 'undefined') {
+						if(res.doc !== undefined) {
 							that.$set(that, 'dbDoc', res.doc);
 						} else {
 							that.$toasted.show('Error while fetching saving note', { duration: 4000, type: 'error', icon: 'warning' });

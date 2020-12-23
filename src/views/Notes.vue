@@ -1,18 +1,20 @@
 <template lang="pug">
 div
-	v-toolbar(dark, color="primary", class="mb-2 mx-1", style="border-radius: 2px;")
-		v-toolbar-side-icon(:to="{name: 'edit-note', params: {id: 1}}")
+	v-toolbar(color="primary", class="mb-2 mx-1", style="border-radius: 2px;")
+		v-app-bar-nav-icon(:to="{name: 'edit-note', params: {id: 1}}")
 			v-icon event_note
 		v-toolbar-title {{ $t('Notes') }}
 		v-spacer
-		v-tooltip(bottom)
-			v-btn(icon, :to="{name:'export-data'}", slot="activator")
-				v-icon unarchive
-			span {{ $t('Export your data manually') }}
-		v-tooltip(bottom)
-			v-btn(icon, :to="{name:'import-data'}", slot="activator")
-				v-icon archive
-			span {{ $t('Import your data manually') }}
+		template(v-slot:activator="{ on }")
+			v-tooltip(bottom, v-on="on")
+				v-btn(icon, :to="{name:'export-data'}", slot="activator")
+					v-icon unarchive
+				span {{ $t('Export your data manually') }}
+		template(v-slot:activator="{ on }")
+			v-tooltip(bottom, v-on="on")
+				v-btn(icon, :to="{name:'import-data'}", slot="activator")
+					v-icon archive
+				span {{ $t('Import your data manually') }}
 	v-alert(type="info", :value="notes.length <= 0")
 		span {{ $t('There is no notes') }}.
 		br
@@ -27,7 +29,7 @@ div
 				:confidential="note.confidential",
 				:subjects="note.subjects",
 				:is_archive="note.archived === true")
-	v-btn(large, icon, fixed, bottom, right, color="primary", :to="{name: 'edit-note', params: {id: 1}}")
+	v-btn(x-large, fab, fixed, bottom, right, elevation="12", color="primary", :to="{name: 'edit-note', params: {id: 1}}")
 		v-icon add
 </template>
 
@@ -79,7 +81,7 @@ export default {
 			return this.notes.filter((note) => {
 				let result = !(this.filters.subjects.length > 0);
 
-				if(typeof(note.subjects) !== 'undefined') {
+				if(note.subjects !== undefined) {
 					if(this.filters.subjects.includes('*' + this.$t('no subject') + '*') && note.subjects.length === 0) {
 						result = true;
 					} else {
@@ -123,16 +125,16 @@ export default {
 			}
 		},
 		updateInitNotes() {
+			/* eslint-disable no-undef */
 			if(this.$store.state.notes_loaded === true) {
-				/* eslint-disable no-undef */
 				let locale = this.$i18n.locale;
-				if(typeof(INITIAL_STATE.contents[this.$i18n.locale]) === 'undefined') {
+				if(INITIAL_STATE.contents[this.$i18n.locale] === undefined) {
 					locale = 'en-US';
 					console.warn(this.$i18n.locale, 'does not exists in INITIAL_STATE.contents, fall back to en-US locale.');
 				}
 
 				if(Object.keys(this.$store.state.notes).length <= 0) {
-					if(typeof(INITIAL_STATE) !== 'undefined' && typeof(INITIAL_STATE.contents) !== 'undefined') {
+					if(INITIAL_STATE.contents !== undefined) {
 						for (let i = 0; i < INITIAL_STATE.contents[locale].length; i++) {
 							const note = cloneDeep(INITIAL_STATE.contents[locale][i]);
 							note.data_type = 'note';
@@ -144,17 +146,17 @@ export default {
 						const note = cloneDeep(INITIAL_STATE.contents[locale][i]);
 						note.data_type = 'note';
 
-						if(typeof(note._id) !== 'undefined') {
+						if(note._id !== undefined) {
 							const found = this.$store.state.notes[note._id];
-							if(typeof(found) !== 'undefined' && !notesAreSame(note, found)) {
+							if(found !== undefined && !notesAreSame(note, found)) {
 								note._rev = found._rev;
 								this.$store.dispatch('setNote', {data: note});
 							}
 						}
 					}
 				}
-				/* eslint-enable no-undef */
 			}
+			/* eslint-enable no-undef */
 		},
 	},
 	mounted() {

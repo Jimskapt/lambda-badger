@@ -6,7 +6,7 @@ div
 			span {{ $t('Go back') }}
 	v-card
 		v-toolbar(color="primary")
-			v-toolbar-side-icon
+			v-app-bar-nav-icon
 				v-icon archive
 			v-toolbar-title {{ $t('Export your data manually') }}
 		v-card-text
@@ -63,7 +63,7 @@ export default {
 				const subjectFilter = function() {
 					let result = !(that.filters.subjects.length > 0);
 
-					if(typeof(note.subjects) !== 'undefined') {
+					if(note.subjects !== undefined) {
 						if(that.filters.subjects.includes('*' + that.$t('no subject') + '*') && note.subjects.length === 0) {
 							result = true;
 						} else {

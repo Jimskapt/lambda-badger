@@ -6,6 +6,13 @@ module.exports = {
       enableInSFC: true,
     },
   },
+  pwa: {
+    workboxPluginMode: "InjectManifest",
+    workboxOptions: {
+      swSrc: "./public/manifest.json",
+      swDest: "service-worker.js",
+    },
+  },
   chainWebpack: (config) => {
     config
       .module
@@ -15,6 +22,5 @@ module.exports = {
         .loader('raw-loader')
         .end()
   },
-  baseUrl: '',
-  outputDir: './www',
+  publicPath: '',
 };

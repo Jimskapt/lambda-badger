@@ -6,7 +6,7 @@ All you need is a *modern* browser that allows to use the last technologies that
 - Javascript
 - IndexedDB (or WebSQL)
 
-<p class="v-alert v-alert--outline info--text">
+<p class="v-alert v-sheet v-alert--border v-alert--border-left indigo my-3">
     <i aria-hidden="true" class="v-icon material-icons theme--dark v-alert__icon">info</i>
     <span>If you are not accepting cookies, this application cannot save the data on your browser, so it can not works.</span>
 </p>
@@ -16,7 +16,7 @@ All you need is a *modern* browser that allows to use the last technologies that
 By default, the data(base) is **only stored on your device**
 (precisely, inside your web browser thanks to [IndexedDB](https://en.wikipedia.org/wiki/Indexed_Database_API) technology).
 
-<p class="v-alert v-alert--outline warning--text">
+<p class="v-alert v-sheet v-alert--border v-alert--border-left orange my-3">
     <i aria-hidden="true" class="v-icon material-icons theme--dark v-alert__icon">priority_high</i>
     <span>If you are cleaning you browser (like cookies), there are significant risks that your local database will be erased !</span>
 </p>

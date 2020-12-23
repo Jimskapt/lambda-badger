@@ -21,7 +21,7 @@ const DEFAULT_SETTINGS = {
 
 let dbSync = null;
 
-const store = new Vuex.Store({
+let store = new Vuex.Store({
   strict: true,
   state: {
     settings: DEFAULT_SETTINGS,
@@ -31,11 +31,11 @@ const store = new Vuex.Store({
   },
   mutations: {
     setNote(state, payload) {
-      if(typeof(payload.data) === 'undefined') {
+      if(payload.data === undefined) {
         console.error('$store.mutations.setNote : missing "data" object on payload');
         return;
       }
-      if(typeof(payload.data._id) === 'undefined') {
+      if(payload.data._id === undefined) {
         console.error('$store.mutations.setNote : missing "_id" value on payload.data');
         return;
       }
@@ -47,11 +47,11 @@ const store = new Vuex.Store({
       }
     },
     setSubject(state, payload) {
-      if(typeof(payload.data) === 'undefined') {
+      if(payload.data === undefined) {
         console.error('$store.mutations.setSubject : missing "data" object on payload');
         return;
       }
-      if(typeof(payload.data.key) === 'undefined') {
+      if(payload.data.key === undefined) {
         console.error('$store.mutations.setSubject : missing "key" value on payload.data');
         return;
       }
@@ -59,11 +59,11 @@ const store = new Vuex.Store({
       Vue.set(state.subjects, payload.data.key, payload.data.value);
     },
     deleteNote(state, payload) {
-      if(typeof(payload.data) === 'undefined') {
+      if(payload.data === undefined) {
         console.error('$store.mutations.deleteNote : missing "data" object in payload');
         return;
       }
-      if(typeof(payload.data._id) === 'undefined') {
+      if(payload.data._id === undefined) {
         console.error('$store.mutations.deleteNote : missing "_id" key on payload object');
         return;
       }
@@ -72,10 +72,10 @@ const store = new Vuex.Store({
       Vue.toasted.show(i18n.t('A note has deleted'), { duration: 2000, type: 'info', icon: 'delete' });
     },
     setLocale(state, payload) {
-      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
+      if(payload !== undefined && payload.value !== undefined) {
         // TODO check if the key is in available locales
 
-        if(typeof(state.settings) === 'undefined') {
+        if(state.settings === undefined) {
           state.settings = DEFAULT_SETTINGS;
         }
         state.settings.locale = payload.value;
@@ -103,8 +103,8 @@ const store = new Vuex.Store({
       }
     },
     setDarkMode(state, payload) {
-      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
-        if(typeof(state.settings) === 'undefined') {
+      if(payload !== undefined && payload.value !== undefined) {
+        if(state.settings === undefined) {
           state.settings = DEFAULT_SETTINGS;
         }
         state.settings.darkMode = payload.value;
@@ -131,8 +131,8 @@ const store = new Vuex.Store({
       }
     },
     setCouchURL(state, payload) {
-      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
-        if(typeof(state.settings) === 'undefined') {
+      if(payload !== undefined && payload.value !== undefined) {
+        if(state.settings === undefined) {
           state.settings = DEFAULT_SETTINGS;
         }
         payload.value = payload.value.trim();
@@ -159,8 +159,8 @@ const store = new Vuex.Store({
       }
     },
     setAllowAutomaticUpdate(state, payload) {
-      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
-        if(typeof(state.settings) === 'undefined') {
+      if(payload !== undefined && payload.value !== undefined) {
+        if(state.settings === undefined) {
           state.settings = DEFAULT_SETTINGS;
         }
         state.settings.allowAutomaticUpdate = payload.value;
@@ -186,8 +186,8 @@ const store = new Vuex.Store({
       }
     },
     setCurrentSync(state, payload) {
-      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
-        if(typeof(state.settings) === 'undefined') {
+      if(payload !== undefined && payload.value !== undefined) {
+        if(state.settings === undefined) {
           state.settings = DEFAULT_SETTINGS;
         }
 
@@ -197,8 +197,8 @@ const store = new Vuex.Store({
       }
     },
     setNotesFilter(state, payload) {
-      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
-        if(typeof(state.settings) === 'undefined') {
+      if(payload !== undefined && payload.value !== undefined) {
+        if(state.settings === undefined) {
           state.settings = DEFAULT_SETTINGS;
         }
 
@@ -254,7 +254,7 @@ const store = new Vuex.Store({
     getNote(context, payload) {
       return new Promise((resolve, reject) => {
         const found = context.state.notes[payload.id];
-        if(typeof(found) !== 'undefined') {
+        if(found !== undefined) {
           resolve({find: true, doc: cloneDeep(found)});
         } else {
           db.get(payload.id)
@@ -269,7 +269,7 @@ const store = new Vuex.Store({
     },
     setNote(context, payload) {
       return new Promise((resolve, reject) => {
-        if(typeof(payload.data) === 'undefined') {
+        if(payload.data === undefined) {
           reject('$store.actions.setNote : missing "data" object in payload');
           return;
         }
@@ -289,9 +289,9 @@ const store = new Vuex.Store({
           }
         };
 
-        payload.data.app_version = require('../package.json').version;
+        payload.data.app_version = require('../../package.json').version;
 
-        if(typeof(payload.data._id) === 'undefined') {
+        if(payload.data._id === undefined) {
           db.post(payload.data)
             .then((res) => {
               okDB(res);
@@ -308,15 +308,15 @@ const store = new Vuex.Store({
     },
     deleteNote(context, payload) {
       return new Promise((resolve, reject) => {
-        if(typeof(payload.data) === 'undefined') {
+        if(payload.data === undefined) {
           reject('$store.actions.deleteNote : missing "data" object in payload');
           return;
         }
-        if(typeof(payload.data._id) === 'undefined') {
+        if(payload.data._id === undefined) {
           reject('$store.actions.deleteNote : missing "_id" key on payload object');
           return;
         }
-        if(typeof(payload.data._rev) === 'undefined') {
+        if(payload.data._rev === undefined) {
           reject('$store.actions.deleteNote : missing "_rev" key on payload object');
           return;
         }
@@ -337,7 +337,7 @@ const store = new Vuex.Store({
       });
     },
     startSyncDB(context, payload) {
-      if(typeof(payload) === 'undefined') {
+      if(payload === undefined) {
         payload = {
           force: false,
         };
@@ -392,7 +392,7 @@ const store = new Vuex.Store({
       });
     },
     setNotesFilter(context, payload) {
-      if(typeof(payload) !== 'undefined' && typeof(payload.value) !== 'undefined') {
+      if(payload !== undefined && payload.value !== undefined) {
         context.commit('setNotesFilter', payload);
 
         const that = this;
@@ -418,15 +418,15 @@ const store = new Vuex.Store({
     },
     toggleArchive(context, payload) {
       return new Promise((resolve, reject) => {
-        if(typeof(payload._id) === 'undefined') {
+        if(payload._id === undefined) {
           reject('$store.actions.toggleArchive : missing "_id" in payload');
           return;
         }
 
         let data = cloneDeep(context.state.notes[payload._id]);
-        if(typeof(data) !== 'undefined') {
+        if(data !== undefined) {
 
-          if(typeof(data.archived) === 'undefined') {
+          if(data.archived === undefined) {
             data.archived = true;
           } else {
             data.archived = !data.archived;
@@ -573,7 +573,7 @@ db.changes({
     if(change.doc.data_type === 'note') {
       console.log('DB:change:', change.doc);
       store.commit('setNote', { data: change.doc });
-    } else if(change.deleted === true && typeof(store.state.notes[change.doc._id]) !== 'undefined') {
+    } else if(change.deleted === true && store.state.notes[change.doc._id] !== undefined) {
       console.log('DB:delete:', change.doc);
       store.commit('deleteNote', { data: change.doc });
     } else {

@@ -6,7 +6,7 @@ div
 			span {{ $t('Go back') }}
 	v-card
 		v-toolbar(color="primary")
-			v-toolbar-side-icon
+			v-app-bar-nav-icon
 				v-icon unarchive
 			v-toolbar-title {{ $t('Import your data manually') }}
 		v-card-text
@@ -14,7 +14,7 @@ div
 			v-divider(class="my-3")
 			v-textarea(:label="$t('Your data')", hide-details, v-model="userData")
 		v-card-actions
-			v-btn(large, block, color="primary", @click="load", :disabled="userData.trim() === ''", :loading="loading")
+			v-btn(block, color="primary", @click="load", :disabled="userData.trim() === ''", :loading="loading")
 				v-icon unarchive
 				span {{ $t('Import your data manually') }}
 </template>
@@ -36,14 +36,14 @@ export default {
 				try {
 					const data = JSON.parse(this.userData);
 
-					if(typeof(data.notes) !== 'undefined') {
-						if(typeof(data.notes.items) !== 'undefined') {
+					if(data.notes !== undefined) {
+						if(data.notes.items !== undefined) {
 
 							let promises = [];
 							data.notes.items.forEach((note) => {
 								let payload = {data: note};
 
-								if(typeof(this.$store.state.notes[note._id]) !== 'undefined') {
+								if(this.$store.state.notes[note._id] !== undefined) {
 									this.$set(payload.data, '_rev', this.$store.state.notes[note._id]._rev);
 								} else {
 									this.$delete(payload.data, '_rev');

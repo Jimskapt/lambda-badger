@@ -6,7 +6,7 @@ Tout ce que vous avez besoin d'un navigateur *moderne* qui vous permet d'utilise
 - Javascript
 - IndexedDB (ou WebSQL)
 
-<p class="v-alert v-alert--outline info--text">
+<p class="v-alert v-sheet v-alert--border v-alert--border-left indigo my-3">
     <i aria-hidden="true" class="v-icon material-icons theme--dark v-alert__icon">info</i>
     <span>Si vous refusez les cookies, cette application ne pourra pas enregistrer les données dans votre navigateur, donc elle ne fonctionnera pas.</span>
 </p>
@@ -16,7 +16,7 @@ Tout ce que vous avez besoin d'un navigateur *moderne* qui vous permet d'utilise
 Par défaut, la base de données est **stockée unique sur votre périphérique**
 (plus précisément, dans votre navigateur web grâce à la technologie [IndexedDB](https://fr.wikipedia.org/wiki/Indexed_Database_API)).
 
-<p class="v-alert v-alert--outline warning--text">
+<p class="v-alert v-sheet v-alert--border v-alert--border-left orange my-3">
     <i aria-hidden="true" class="v-icon material-icons theme--dark v-alert__icon">priority_high</i>
     <span>Si vous nettoyez votre navigateur (comme les cookies), il y a de gros riques que votre base de données locale soit effacée !</span>
 </p>

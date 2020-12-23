@@ -1,7 +1,7 @@
 <template lang="pug">
 v-card
-	v-toolbar(dark, color="primary")
-		v-btn(icon)
+	v-toolbar(color="primary")
+		v-app-bar-nav-icon
 			v-icon settings
 		v-toolbar-title {{ $t('Settings') }}
 	v-card-text
@@ -37,21 +37,27 @@ v-card
 					v-btn(block, v-if="couchUrl.trim() !== '' && !allowAutomaticUpdate", @click="doSync")
 						v-icon sync
 						span {{ $t('Manual update') }}
-			v-btn(block, :to="{name: 'export-data'}")
-				v-icon archive
-				span {{ $t('Export your data manually') }}
-			v-btn(block, :to="{name: 'import-data'}")
-				v-icon unarchive
-				span {{ $t('Import your data manually') }}
-			
+			v-row
+				v-col
+					v-btn(block, :to="{name: 'export-data'}")
+						v-icon archive
+						span {{ $t('Export your data manually') }}
+				v-col
+					v-btn(block, :to="{name: 'import-data'}")
+						v-icon unarchive
+						span {{ $t('Import your data manually') }}
+
 			v-divider(class="mt-3")
 		v-card-actions
-			v-btn(block, color="error", @click="$router.go(-1)")
-				v-icon clear
-				span {{ $t('Abort') }}
-			v-btn(block, color="success", @click="save")
-				v-icon save
-				span {{ $t('Save') }}
+			v-row
+				v-col
+					v-btn(block, color="error", @click="$router.go(-1)")
+						v-icon clear
+						span {{ $t('Abort') }}
+				v-col
+					v-btn(block, color="success", @click="save")
+						v-icon save
+						span {{ $t('Save') }}
 </template>
 
 <script>
@@ -77,7 +83,7 @@ export default {
 			const result = {};
 
 			const that = this;
-			if(typeof(this.$i18n) !== 'undefined' && typeof(this.$i18n.messages) !== 'undefined') {
+			if(this.$i18n !== undefined && this.$i18n.messages !== undefined) {
 				Object.keys(this.$i18n.messages).forEach((m) => {
 					const item = {
 							value: m,
@@ -114,7 +120,7 @@ export default {
 			location.reload();
 		},
 		save() {
-			if(typeof(this.locale) !== 'undefined' && typeof(this.locale.value) !== 'undefined') {
+			if(this.locale !== undefined && this.locale.value !== undefined) {
 				this.$store.commit('setLocale', {value: this.locale.value});
 			}
 
