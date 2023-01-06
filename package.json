@@ -39,7 +39,7 @@
     "@vue/cli-plugin-pwa": "^4",
     "@vue/cli-plugin-router": "^4",
     "@vue/cli-plugin-vuex": "^4",
-    "@vue/cli-service": "^4",
+    "@vue/cli-service": "^5",
     "@vue/test-utils": "^1",
     "eslint": "^7",
     "eslint-plugin-vue": "^7",
